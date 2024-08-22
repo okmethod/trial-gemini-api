@@ -2,9 +2,20 @@ import { purgeCss } from "vite-plugin-tailwind-purgecss";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import fs from "fs";
+import dotenv from 'dotenv';
 import path from "path";
 
 const githubRepoName = "trial-gemini-api";
+
+// 環境変数のロード
+const envFiles = [
+  //`.env.${process.env.NODE_ENV}`
+  ".env",
+];
+
+for (const file of envFiles) {
+  dotenv.config({ path: path.resolve(__dirname, file) });
+}
 
 const content404 = ((base: string) => `
 <!DOCTYPE html>
@@ -31,6 +42,9 @@ export default defineConfig({
   // Github Pagesで公開する場合は、base にリポジトリ名を指定
   base: `/${githubRepoName}/`,
   publicDir: "static",
+  define: {
+    'process.env': process.env
+  },
   build: {
     minify: "terser",
     terserOptions: {

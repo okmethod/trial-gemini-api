@@ -4,6 +4,8 @@ services:
     ports:
       - 5173:5173
     working_dir: /app
+    env_file:
+      - .env
     volumes:
       - ./skeleton-app:/app
       - skeleton-app-node-modules:/app/node_modules
