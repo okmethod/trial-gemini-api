@@ -7,34 +7,43 @@
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  let chatHistory: { sender: string; message: string }[] = [];
+  const initialPrompt = `
+あなたはポケモンの博士です。
+私は、特定の1匹のポケモンの思い浮かべています。
+あなたは、そのポケモンが何かを当てるために質問をしてください。
+ただし、質問は「はい」または「いいえ」で回答できるものにしてください。
+十分な情報が揃ったと判断したら、そのポケモンの名前を当ててください。
+`;
+
+  let chatHistory: { role: "user" | "model"; parts: string }[] = [];
   let userInput = "";
   async function sendMessage() {
     if (userInput.trim() === "") return;
-    chatHistory = [...chatHistory, { sender: "user", message: userInput }];
-    const prompt = userInput;
+    const chat = model.startChat({
+      history: chatHistory.map((chat) => ({
+        role: chat.role,
+        parts: [{ text: chat.parts }],
+      })),
+    });
+    const response = await chat.sendMessage(userInput);
+    chatHistory = [...chatHistory, { role: "user", parts: userInput }];
     userInput = "";
 
-    try {
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const aiMessage = response.text();
-
-      chatHistory = [...chatHistory, { sender: "ai", message: aiMessage }];
-    } catch (error) {
-      console.error("Error generating content:", error);
-    }
+    const aiMessage = response.response.text();
+    chatHistory = [...chatHistory, { role: "model", parts: aiMessage }];
   }
 
   function reset() {
     chatHistory = [];
+    userInput = initialPrompt;
+    sendMessage();
   }
 </script>
 
 <div class="cRouteBodyStyle">
   <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-4">
-    <h1 class="cTitleStyle md:!text-3xl">Example</h1>
+    <h1 class="cTitleStyle md:!text-3xl">Pokenator</h1>
   </div>
 
   <!-- コンテンツ部 -->
@@ -83,10 +92,10 @@
       <div class="chat-history">
         <div class="p-2 bg-gray-100 rounded">
           <span>chat history</span>
-          {#each chatHistory as chat}
-            <div class={chat.sender === "user" ? "user-message" : "ai-message"}>
-              <strong>{chat.sender === "user" ? "You" : "AI"}:</strong>
-              {chat.message}
+          {#each chatHistory.slice(1) as chat}
+            <div class={chat.role === "user" ? "user-message" : "ai-message"}>
+              <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
+              {chat.parts}
             </div>
           {/each}
         </div>
