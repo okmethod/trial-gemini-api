@@ -1,43 +1,16 @@
 <script lang="ts">
-  import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+  import type { GenerativeModel } from "@google/generative-ai";
+  import initialPrompt from "./initialPrompt";
 
   export let data: {
-    apiKey: string;
+    model: GenerativeModel;
   };
-
-  const apiKey = (process.env.GEMINI_API_KEY as string) ?? data.apiKey;
-
-  //const { GoogleGenerativeAI } = require("@google/generative-ai"); サーバサイドで実行する場合
-  const genAI = new GoogleGenerativeAI(apiKey as string);
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    safetySettings: [
-      {
-        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
-        threshold: HarmBlockThreshold.BLOCK_NONE,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
-        threshold: HarmBlockThreshold.BLOCK_NONE,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-        threshold: HarmBlockThreshold.BLOCK_NONE,
-      },
-      {
-        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
-        threshold: HarmBlockThreshold.BLOCK_NONE,
-      },
-    ],
-  });
-
-  import initialPrompt from "./initialPrompt";
 
   let chatHistory: { role: "user" | "model"; parts: string }[] = [];
   let userInput = "";
   async function sendMessage() {
     if (userInput.trim() === "") return;
-    const chat = model.startChat({
+    const chat = data.model.startChat({
       history: chatHistory.map((chat) => ({
         role: chat.role,
         parts: [{ text: chat.parts }],
@@ -118,7 +91,7 @@
     </div>
     <div class="m-4">
       <div class="flex items-center justify-center space-x-2">
-        <input type="text" class="rounded" bind:value={userInput} placeholder="Type your message..." />
+        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="Type your message..." />
         <button on:click={sendMessage} class="cIconButtonStyle">
           <div class="cSpanDivStyle">
             <span> Send </span>

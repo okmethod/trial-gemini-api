@@ -1,4 +1,6 @@
 import type { LoadEvent } from "@sveltejs/kit";
+import type { GenerativeModel } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
 async function fetchApiKey(fetchFunction: typeof fetch) {
   try {
@@ -10,7 +12,31 @@ async function fetchApiKey(fetchFunction: typeof fetch) {
   }
 }
 
-export async function load({ fetch }: LoadEvent): Promise<{ apiKey: string }> {
-  const apiKey = await fetchApiKey(fetch);
-  return { apiKey };
+export async function load({ fetch }: LoadEvent): Promise<{ model: GenerativeModel }> {
+  const apiKey = (process.env.GEMINI_API_KEY as string) ?? (await fetchApiKey(fetch));
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    safetySettings: [
+      {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+    ],
+  });
+
+  return { model };
 }
