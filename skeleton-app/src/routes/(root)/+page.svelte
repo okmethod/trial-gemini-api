@@ -1,10 +1,14 @@
-<script context="module" lang="ts">
-  import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai"; // クライアントサイドで実行する場合
-</script>
-
 <script lang="ts">
+  import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+
+  export let data: {
+    apiKey: string;
+  };
+
+  const apiKey = (process.env.GEMINI_API_KEY as string) ?? data.apiKey;
+
   //const { GoogleGenerativeAI } = require("@google/generative-ai"); サーバサイドで実行する場合
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+  const genAI = new GoogleGenerativeAI(apiKey as string);
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     safetySettings: [

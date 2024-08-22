@@ -5,8 +5,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 import path from "path";
 
-const githubRepoName = "trial-gemini-api";
-
 // 環境変数のロード
 const envFiles = [
   //`.env.${process.env.NODE_ENV}`
@@ -17,7 +15,7 @@ for (const file of envFiles) {
   dotenv.config({ path: path.resolve(__dirname, file) });
 }
 
-const content404 = ((base: string) => `
+const content404 = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +26,7 @@ const content404 = ((base: string) => `
   <script>
     // Redirect to the root URL
     var path = window.location.pathname;
-    var newUrl = window.location.origin + '/${base}/';
+    var newUrl = window.location.origin;
     window.location.replace(newUrl);
   </script>
 </head>
@@ -36,11 +34,9 @@ const content404 = ((base: string) => `
   <p>Redirecting...</p>
 </body>
 </html>
-`)(githubRepoName);
+`;
 
 export default defineConfig({
-  // Github Pagesで公開する場合は、base にリポジトリ名を指定
-  base: `/${githubRepoName}/`,
   publicDir: "static",
   define: {
     "process.env": process.env,
@@ -50,6 +46,14 @@ export default defineConfig({
     terserOptions: {
       compress: {
         pure_funcs: ["console.debug"], // console.debug を無効化
+      },
+    },
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://okmethod-gemini-trial.web.app",
+        changeOrigin: true,
       },
     },
   },

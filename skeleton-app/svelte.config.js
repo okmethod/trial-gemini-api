@@ -1,8 +1,6 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
-const githubRepoName = "trial-gemini-api";
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   extensions: [".svelte"],
@@ -25,10 +23,6 @@ const config = {
       precompress: false,
       strict: true,
     }),
-    paths: {
-      // Github Pagesで公開する場合は、base にリポジトリ名を指定
-      base: `/${githubRepoName}`,
-    },
   },
 };
 export default config;

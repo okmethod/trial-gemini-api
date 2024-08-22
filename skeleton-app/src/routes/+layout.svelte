@@ -27,7 +27,7 @@
 </script>
 
 <svelte:head>
-  <title>My Static WebSite</title>
+  <title>Pokenater</title>
 </svelte:head>
 
 <Modal />

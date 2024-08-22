@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "trial-gemini-api"
-  }
+    "default": "okmethod-gemini-trial"
+  },
+  "targets": {},
+  "etags": {}
 }

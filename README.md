@@ -22,4 +22,20 @@
 
 ## インターネットへの公開方法
 
-- 準備中
+- Gemini APIキーの登録と Firebase Functions へのデプロイ
+
+  ```sh
+  firebase functions:config:set api.key="(Your API Key)"
+  firebase deploy --only functions
+  ```
+
+- SPA のビルドと Firebase Hosting へのデプロイ
+
+  ```sh
+  (cd skeleton-app && npm run build)
+  firebase deploy --only hosting
+  ```
+
+- ブラウザでアクセス
+
+  https://okmethod-gemini-trial.web.app/
