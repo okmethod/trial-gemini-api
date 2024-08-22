@@ -109,21 +109,18 @@
       </div>
     </div>
     <div class="m-4">
-      <div class="chat-history">
-        <div class="p-2 bg-gray-100 rounded">
-          <span>chat history</span>
-          {#each chatHistory.slice(1) as chat}
-            <div class={chat.role === "user" ? "user-message" : "ai-message"}>
-              <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
-              {chat.parts}
-            </div>
-          {/each}
-        </div>
+      <div class="p-2 w-96 h-96 overflow-y-scroll bg-gray-100 rounded">
+        {#each chatHistory.slice(1) as chat}
+          <div class={chat.role === "user" ? "user-message" : "ai-message"}>
+            <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
+            {chat.parts}
+          </div>
+        {/each}
       </div>
     </div>
     <div class="m-4">
-      <div class="user-input">
-        <input type="text" bind:value={userInput} placeholder="Type your message..." />
+      <div class="flex items-center justify-center space-x-2">
+        <input type="text" class="rounded" bind:value={userInput} placeholder="Type your message..." />
         <button on:click={sendMessage} class="cIconButtonStyle">
           <div class="cSpanDivStyle">
             <span> Send </span>
