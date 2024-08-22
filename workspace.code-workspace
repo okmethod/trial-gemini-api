@@ -8,6 +8,10 @@
 			"name": "skeleton-app",
 			"path": "skeleton-app"
 		},
+		{
+			"name": "functions",
+			"path": "functions"
+		},
 	],
 	"settings": {}
 }
