@@ -4,6 +4,12 @@
 
 ## ローカルでの起動方法
 
+- Gemini APIキーの登録
+
+  ```sh
+  echo "GEMINI_API_KEY=(Your API Key)" >> .env
+  ```
+
 - コンテナ起動
 
   ```sh
@@ -16,13 +22,4 @@
 
 ## インターネットへの公開方法
 
-- 静的アセットデプロイ
-
-  ```sh
-  (cd skeleton-app && npm run build)
-  (cd skeleton-app && npm run deploy)
-  ```
-
-- ブラウザでアクセス
-
-  https://okmethod.github.io/trial-gemini-api/
+- 準備中
