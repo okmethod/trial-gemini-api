@@ -2,7 +2,7 @@ import { purgeCss } from "vite-plugin-tailwind-purgecss";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import fs from "fs";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import path from "path";
 
 const githubRepoName = "trial-gemini-api";
@@ -43,7 +43,7 @@ export default defineConfig({
   base: `/${githubRepoName}/`,
   publicDir: "static",
   define: {
-    'process.env': process.env
+    "process.env": process.env,
   },
   build: {
     minify: "terser",
