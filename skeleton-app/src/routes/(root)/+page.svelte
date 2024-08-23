@@ -6,6 +6,7 @@
 
   export let data: {
     model: GenerativeModel | null;
+    hogeTorusImageUrl: string;
   };
 
   interface Chat {
@@ -102,6 +103,9 @@
       </div>
     </div>
     <div class="m-4">
+      <div>
+        <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-40 h-40 rounded" />
+      </div>
       <div class="p-2 w-80 h-96 overflow-y-scroll bg-gray-100 rounded">
         {#each chatHistory.slice(1) as chat}
           <div class={chat.role === "user" ? "user-message" : "ai-message"}>
