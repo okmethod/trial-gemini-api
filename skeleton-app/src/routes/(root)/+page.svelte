@@ -46,10 +46,13 @@
 
     userInput = "";
   }
+  let latestAiOutput: string | null = null;
+  $: latestAiOutput = chatHistory.filter((chat) => chat.role === "model").slice(-1)[0]?.parts ?? null;
 
   function reset() {
     chatHistory = [];
     userInput = initialPrompt;
+    latestAiOutput = null;
     sendMessage();
   }
 
@@ -74,6 +77,21 @@
     const m = modalSettings(modalComponent);
     modalStore.trigger(m);
   }
+
+  // スタイル
+  function cTextSize(message: string | null): string {
+    if (message === null) {
+      return "text-base";
+    }
+    switch (true) {
+      case message.length > 80:
+        return "text-xs";
+      case message.length > 60:
+        return "text-sm";
+      default:
+        return "text-base";
+    }
+  }
 </script>
 
 <div class="cRouteBodyStyle">
@@ -83,8 +101,8 @@
   </div>
 
   <!-- コンテンツ部 -->
-  <div class="cContentPartStyle !mt-1 !ml-4 !mr-4">
-    <!-- ボタン -->
+  <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
+    <!-- 上部ボタン -->
     <div class="flex items-center justify-center space-x-2">
       <div class="cInputFormAndMessagePartStyle">
         <form
@@ -131,19 +149,27 @@
         </button>
       </form>
     </div>
-    <div class="m-4">
-      <div>
-        <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-40 h-40 rounded" />
-      </div>
-      <div class="p-2 w-80 h-96 overflow-y-scroll bg-gray-100 rounded">
-        {#each chatHistory.slice(1) as chat}
-          <div class={chat.role === "user" ? "user-message" : "ai-message"}>
-            <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
-            {chat.parts}
-          </div>
-        {/each}
+
+    <!-- Pokenator 表示 -->
+    <div class="mt-4 mb-4">
+      <div class="flex items-center justify-center space-x-2">
+        <div>
+          <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-24 h-24" />
+        </div>
+        <div class="relative p-2 w-48 h-48 bg-gray-100 rounded-xl">
+          <div
+            class="absolute top-16 left-0 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-100 -ml-2"
+          />
+          {#if latestAiOutput}
+            <span class={cTextSize(latestAiOutput)}>{latestAiOutput}</span>
+          {:else}
+            <span>ゲームを始めよう！</span>
+          {/if}
+        </div>
       </div>
     </div>
+
+    <!-- 任意メッセージ送信 -->
     <div class="m-4">
       <div class="flex items-center justify-center space-x-2">
         <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="Type your message..." />
