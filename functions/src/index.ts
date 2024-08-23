@@ -1,46 +1,90 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+/* eslint-disable object-curly-spacing */
 
 import * as express from "express";
 import * as cors from "cors";
 import * as functions from "firebase-functions";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import type {
+  ModelParams,
+  StartChatParams,
+  GenerateContentResult,
+} from "@google/generative-ai";
 
 const app = express();
 
-const allowedOrigins = ["https://okmethod-gemini-trial.web.app", "https://okmethod-gemini-trial.firebaseapp.com"];
+const allowedOrigins = [
+  "https://okmethod-gemini-trial.web.app",
+  "https://okmethod-gemini-trial.firebaseapp.com",
+];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-}));
+app.use(
+  cors({
+    origin: function(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  })
+);
 
+interface RequestBody {
+  modelParams: ModelParams;
+  startChatParams: StartChatParams;
+  userInput: string;
+}
 
-app.get("/api/api-key", (_, res) => {
+app.post("/api/chat-reply", async (req, res) => {
+  let requestBody: RequestBody;
+  try {
+    requestBody = JSON.parse(req.body);
+  } catch (error) {
+    res.status(400).json({
+      error: "Invalid JSON format",
+      details: req.body,
+    });
+    return;
+  }
+
+  const { modelParams, startChatParams, userInput } = requestBody;
+  if ( !modelParams || !startChatParams || !userInput ) {
+    res.status(400).json({
+      error: "Missing required parameters",
+      details: requestBody,
+    });
+    return;
+  }
+
   const apiKey = functions.config().api?.key;
   if (!apiKey) {
-    res.status(500).json({error: "API key not configured"});
-  } else {
-    res.json({apiKey});
+    res.status(500).json({ error: "API key not configured" });
+    return;
   }
+
+  let genAI: GoogleGenerativeAI | null = null;
+  try {
+    genAI = new GoogleGenerativeAI(apiKey);
+  } catch (err) {
+    console.error(err);
+  }
+  if (!genAI) {
+    res.status(500).json({ error: "Failed to initialize GoogleGenerativeAI" });
+    return;
+  }
+
+  let response: GenerateContentResult;
+  try {
+    const model = genAI.getGenerativeModel(modelParams);
+    const chat = model.startChat(startChatParams);
+    response = await chat.sendMessage(userInput);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "No response from GoogleGenerativeAI" });
+    return;
+  }
+
+  res.json(response);
 });
 
 exports.api = functions.region("asia-northeast1").https.onRequest(app);
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });

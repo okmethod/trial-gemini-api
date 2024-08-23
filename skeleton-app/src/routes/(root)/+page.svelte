@@ -1,27 +1,49 @@
 <script lang="ts">
-  import type { GenerativeModel } from "@google/generative-ai";
+  import type { GenerativeModel, StartChatParams } from "@google/generative-ai";
+  import postChatReply from "$lib/api/postChatReply.client";
+  import modelParams from "./modelParams";
   import initialPrompt from "./initialPrompt";
 
   export let data: {
-    model: GenerativeModel;
+    model: GenerativeModel | null;
   };
 
-  let chatHistory: { role: "user" | "model"; parts: string }[] = [];
-  let userInput = "";
-  async function sendMessage() {
-    if (userInput.trim() === "") return;
-    const chat = data.model.startChat({
+  interface Chat {
+    role: "user" | "model";
+    parts: string;
+  }
+
+  async function fetchChatReply(chatHistory: Chat[], userInput: string): Promise<string | null> {
+    const chatParam: StartChatParams = {
       history: chatHistory.map((chat) => ({
         role: chat.role,
         parts: [{ text: chat.parts }],
       })),
-    });
-    const response = await chat.sendMessage(userInput);
-    chatHistory = [...chatHistory, { role: "user", parts: userInput }];
-    userInput = "";
+    };
+    let reply: string | null;
+    if (data?.model) {
+      // development
+      const chat = data.model.startChat(chatParam);
+      const response = await chat.sendMessage(userInput);
+      reply = response.response.text();
+    } else {
+      // production
+      const response = await postChatReply(window.fetch, modelParams, chatParam, userInput);
+      reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
+    }
+    return reply;
+  }
 
-    const aiMessage = response.response.text();
-    chatHistory = [...chatHistory, { role: "model", parts: aiMessage }];
+  let chatHistory: Chat[] = [];
+  let userInput = "";
+  async function sendMessage() {
+    if (userInput.trim() === "") return;
+    chatHistory = [...chatHistory, { role: "user", parts: userInput }];
+
+    const reply = (await fetchChatReply(chatHistory, userInput)) ?? "今日はもう、つかれちゃったよ";
+    chatHistory = [...chatHistory, { role: "model", parts: reply }];
+
+    userInput = "";
   }
 
   function reset() {
@@ -80,7 +102,7 @@
       </div>
     </div>
     <div class="m-4">
-      <div class="p-2 w-96 h-96 overflow-y-scroll bg-gray-100 rounded">
+      <div class="p-2 w-80 h-96 overflow-y-scroll bg-gray-100 rounded">
         {#each chatHistory.slice(1) as chat}
           <div class={chat.role === "user" ? "user-message" : "ai-message"}>
             <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
