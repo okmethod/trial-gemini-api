@@ -1,6 +1,11 @@
 <script lang="ts">
   import type { GenerativeModel, StartChatParams } from "@google/generative-ai";
+  import { getModalStore } from "@skeletonlabs/skeleton";
+  import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
+  import Icon from "@iconify/svelte";
+  import type { Chat } from "$lib/types/chat";
   import postChatReply from "$lib/api/postChatReply.client";
+  import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import modelParams from "./modelParams";
   import initialPrompt from "./initialPrompt";
 
@@ -8,11 +13,6 @@
     model: GenerativeModel | null;
     hogeTorusImageUrl: string;
   };
-
-  interface Chat {
-    role: "user" | "model";
-    parts: string;
-  }
 
   async function fetchChatReply(chatHistory: Chat[], userInput: string): Promise<string | null> {
     const chatParam: StartChatParams = {
@@ -51,6 +51,28 @@
     chatHistory = [];
     userInput = initialPrompt;
     sendMessage();
+  }
+
+  // モーダル表示
+  const modalStore = getModalStore();
+  function modalSettings(modalComponent: ModalComponent): ModalSettings {
+    return {
+      type: "component",
+      component: modalComponent,
+      backdropClasses: "fixed inset-0 !bg-gray-300/90",
+    };
+  }
+
+  function showChatLogModal(): void {
+    const modalComponent: ModalComponent = {
+      ref: ChatLogModal,
+      props: {
+        title: "チャットログ",
+        chatHistory: chatHistory,
+      },
+    };
+    const m = modalSettings(modalComponent);
+    modalStore.trigger(m);
   }
 </script>
 
@@ -101,6 +123,13 @@
           </button>
         </form>
       </div>
+      <form on:submit|preventDefault={showChatLogModal}>
+        <button type="submit" class="cIconButtonStyle">
+          <div class="cIconDivStyle">
+            <Icon icon="mdi:forum-outline" class="cIconStyle" />
+          </div>
+        </button>
+      </form>
     </div>
     <div class="m-4">
       <div>
