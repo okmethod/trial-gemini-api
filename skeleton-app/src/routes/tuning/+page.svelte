@@ -1,12 +1,26 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { GoogleGenerativeAI, type GenerativeModel } from "@google/generative-ai";
+  import type { GenerativeModel } from "@google/generative-ai";
   import type { PokeData } from "./+page";
 
   export let data: {
     model: GenerativeModel | null;
     trainingPokeDict: Record<number, PokeData>;
   };
+
+  async function hogeFunc() {
+    if (data?.model) {
+      console.log("Ready to export");
+
+      for (const key in data.trainingPokeDict) {
+        const pokeData = data.trainingPokeDict[key];
+        const generatedContent = await data.model.generateContent([pokeData.prompt, pokeData.imagePart]);
+        console.log(`Generated content for ${pokeData.name}:`, generatedContent.response.text());
+      }
+    } else {
+      console.log("Failed to initailize GenerativeModel");
+    }
+  }
 
   let exportFileName = "tuning.csv";
   let isProcessing = false;
@@ -25,7 +39,7 @@
       <div class="flex flex-col md:flex-row space-x-3">
         <div class="cInputFormAndMessagePartStyle">
           <input type="text" id="id" bind:value={exportFileName} class="border rounded px-4 py-1 h-full" />
-          <form on:submit|preventDefault={() => {}}>
+          <form on:submit|preventDefault={hogeFunc}>
             <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
               <div class="cIconDivStyle">
                 <Icon icon="mdi:download-box-outline" class="cIconStyle" />
