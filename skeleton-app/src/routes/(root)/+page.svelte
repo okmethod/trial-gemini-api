@@ -5,6 +5,7 @@
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
   import postChatReply from "$lib/api/postChatReply.client";
+  import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import modelParams from "./modelParams";
   import initialPrompt from "./initialPrompt";
@@ -37,21 +38,22 @@
 
   let chatHistory: Chat[] = [];
   let userInput = "";
+  let aiOutput = "";
   async function sendMessage() {
     if (userInput.trim() === "") return;
     chatHistory = [...chatHistory, { role: "user", parts: userInput }];
 
-    const reply = (await fetchChatReply(chatHistory, userInput)) ?? "今日はもう、つかれちゃったよ";
+    const reply = (await fetchChatReply(chatHistory, userInput)) ?? "今日はもう、つかれちゃったよ...";
     chatHistory = [...chatHistory, { role: "model", parts: reply }];
 
     userInput = "";
+    aiOutput = await transMarkdownToSanitizedHtml(reply);
   }
-  let latestAiOutput: string | null = null;
-  $: latestAiOutput = chatHistory.filter((chat) => chat.role === "model").slice(-1)[0]?.parts ?? null;
 
   function resetChat() {
     chatHistory = [];
-    latestAiOutput = null;
+    userInput = "";
+    aiOutput = "";
   }
 
   function startGame() {
@@ -141,10 +143,10 @@
           "
         />
         <div class="w-72 h-48 p-2 bg-gray-100 rounded-xl">
-          {#if latestAiOutput === null}
+          {#if aiOutput === ""}
             <span>ゲームを始めよう！</span>
           {:else}
-            <span class={cTextSize(latestAiOutput)}>{latestAiOutput}</span>
+            <span class={cTextSize(aiOutput)}>{@html aiOutput}</span>
           {/if}
         </div>
       </div>
@@ -152,7 +154,7 @@
 
     <!-- 下部ボタン -->
     <div class="flex items-center justify-center space-x-2">
-      {#if latestAiOutput === null}
+      {#if aiOutput === ""}
         <form on:submit|preventDefault={startGame}>
           <button type="submit" class="cIconButtonStyle">
             <div class={cButtonSpan}>
