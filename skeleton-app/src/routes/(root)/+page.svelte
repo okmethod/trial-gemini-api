@@ -100,6 +100,9 @@
   }
 
   const cButtonSpan = "w-16 h-5 flex items-center justify-center";
+
+  /* eslint-disable svelte/no-at-html-tags */
+  /* {@html}ディレクティブ を使う前は必ずサニタイズすること！ */
 </script>
 
 <div class="cRouteBodyStyle">
@@ -144,7 +147,10 @@
         />
         <div class="w-72 h-48 p-2 bg-gray-100 rounded-xl">
           {#if aiOutput === ""}
-            <span>ゲームを始めよう！</span>
+            <span>
+              1~151番目のポケモンの中から、好きなポケモンを選んでね。私が質問して、そのポケモンを当ててみせよう。<br />
+              <strong>さあゲームを始めよう！</strong>
+            </span>
           {:else}
             <span class={cTextSize(aiOutput)}>{@html aiOutput}</span>
           {/if}
