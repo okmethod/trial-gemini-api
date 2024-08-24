@@ -8,7 +8,7 @@
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import modelParams from "./modelParams";
-  import initialPrompt from "./initialPrompt";
+  import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
     model: GenerativeModel | null;
@@ -36,29 +36,61 @@
     return reply;
   }
 
+  const FailedAiOutput = "今日はもう、つかれちゃったよ...";
+
   let chatHistory: Chat[] = [];
   let userInput = "";
-  let aiOutput = "";
+  let aiOutput = initialGuide;
+  let turnCounter = 0;
+  let gameStatus: GameStatus = "init";
   async function sendMessage() {
     if (userInput.trim() === "") return;
     chatHistory = [...chatHistory, { role: "user", parts: userInput }];
 
-    const reply = (await fetchChatReply(chatHistory, userInput)) ?? "今日はもう、つかれちゃったよ...";
+    let reply: string;
+    try {
+      reply = (await fetchChatReply(chatHistory, userInput)) ?? FailedAiOutput;
+    } catch (error) {
+      console.error(error);
+      reply = FailedAiOutput;
+      turnCounter += 99;
+    }
     chatHistory = [...chatHistory, { role: "model", parts: reply }];
 
     userInput = "";
     aiOutput = await transMarkdownToSanitizedHtml(reply);
+    turnCounter += 1;
+    gameStatus = updateGameStatus(turnCounter);
+    console.log(turnCounter);
+  }
+
+  type GameStatus = "init" | "onGame" | "giveUp" | "gameOver" | "unknown";
+  const maxTurn = 12; // 最大10回答 -> 正解ポケモンこれかな？ -> 正解ポケモン教えて？
+  function updateGameStatus(turn: number): GameStatus {
+    switch (true) {
+      case turn > maxTurn:
+        return "gameOver";
+      case turn === maxTurn:
+        return "giveUp";
+      case turn > 0:
+        return "onGame";
+      case turn === 0:
+        return "init";
+      default:
+        return "unknown";
+    }
   }
 
   function resetChat() {
     chatHistory = [];
     userInput = "";
-    aiOutput = "";
+    aiOutput = initialGuide;
   }
 
   function startGame() {
     resetChat();
     userInput = initialPrompt;
+    turnCounter = 0;
     sendMessage();
   }
 
@@ -85,20 +117,6 @@
   }
 
   // スタイル
-  function cTextSize(message: string | null): string {
-    if (message === null) {
-      return "text-base";
-    }
-    switch (true) {
-      case message.length > 200:
-        return "text-xs";
-      case message.length > 100:
-        return "text-sm";
-      default:
-        return "text-base";
-    }
-  }
-
   const cButtonSpan = "w-16 h-5 flex items-center justify-center";
 
   /* eslint-disable svelte/no-at-html-tags */
@@ -145,22 +163,15 @@
             border-r-8 border-r-transparent
           "
         />
-        <div class="w-72 h-48 p-2 bg-gray-100 rounded-xl">
-          {#if aiOutput === ""}
-            <span>
-              1~151番目のポケモンの中から、好きなポケモンを選んでね。私が質問して、そのポケモンを当ててみせよう。<br />
-              <strong>さあゲームを始めよう！</strong>
-            </span>
-          {:else}
-            <span class={cTextSize(aiOutput)}>{@html aiOutput}</span>
-          {/if}
+        <div class="w-72 h-full p-4 bg-gray-100 rounded-xl">
+          <span>{@html `${aiOutput}`} </span>
         </div>
       </div>
     </div>
 
     <!-- 下部ボタン -->
     <div class="flex items-center justify-center space-x-2">
-      {#if aiOutput === ""}
+      {#if gameStatus === "init"}
         <form on:submit|preventDefault={startGame}>
           <button type="submit" class="cIconButtonStyle">
             <div class={cButtonSpan}>
@@ -168,7 +179,7 @@
             </div>
           </button>
         </form>
-      {:else}
+      {:else if gameStatus === "onGame"}
         <form
           on:submit|preventDefault={() => {
             userInput = "はい";
@@ -193,21 +204,30 @@
             </div>
           </button>
         </form>
-      {/if}
-    </div>
-
-    <div class="h-6"><!--spacer--></div>
-
-    <!-- 任意メッセージ送信 -->
-    <div class="m-4">
-      <div class="flex items-center justify-center space-x-2">
-        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="your message..." />
+      {:else if gameStatus === "giveUp"}
+        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="ポケモンの名前" />
         <button on:click={sendMessage} class="cIconButtonStyle">
-          <div class="cSpanDivStyle">
-            <span> Send </span>
+          <div class={cButtonSpan}>
+            <span> こたえる </span>
           </div>
         </button>
-      </div>
+      {:else if gameStatus === "gameOver"}
+        <form on:submit|preventDefault={startGame}>
+          <button type="submit" class="cIconButtonStyle">
+            <div class={cButtonSpan}>
+              <span> もう一度 </span>
+            </div>
+          </button>
+        </form>
+      {:else}
+        <form on:submit|preventDefault={resetChat}>
+          <button type="submit" class="cIconButtonStyle">
+            <div class={cButtonSpan}>
+              <span> リセット </span>
+            </div>
+          </button>
+        </form>
+      {/if}
     </div>
   </div>
 </div>
