@@ -49,10 +49,14 @@
   let latestAiOutput: string | null = null;
   $: latestAiOutput = chatHistory.filter((chat) => chat.role === "model").slice(-1)[0]?.parts ?? null;
 
-  function reset() {
+  function resetChat() {
     chatHistory = [];
-    userInput = initialPrompt;
     latestAiOutput = null;
+  }
+
+  function startGame() {
+    resetChat();
+    userInput = initialPrompt;
     sendMessage();
   }
 
@@ -92,6 +96,8 @@
         return "text-base";
     }
   }
+
+  const cButtonSpan = "w-16 h-5 flex items-center justify-center";
 </script>
 
 <div class="cRouteBodyStyle">
@@ -104,43 +110,13 @@
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
     <div class="flex items-center justify-center space-x-2">
-      <div class="cInputFormAndMessagePartStyle">
-        <form
-          on:submit|preventDefault={() => {
-            userInput = "はい";
-            sendMessage();
-          }}
-        >
-          <button type="submit" class="cIconButtonStyle">
-            <div class="cSpanDivStyle">
-              <span> Yes </span>
-            </div>
-          </button>
-        </form>
-      </div>
-      <div class="cInputFormAndMessagePartStyle">
-        <form
-          on:submit|preventDefault={() => {
-            userInput = "いいえ";
-            sendMessage();
-          }}
-        >
-          <button type="submit" class="cIconButtonStyle">
-            <div class="cSpanDivStyle">
-              <span> No </span>
-            </div>
-          </button>
-        </form>
-      </div>
-      <div class="cInputFormAndMessagePartStyle">
-        <form on:submit|preventDefault={reset}>
-          <button type="submit" class="cIconButtonStyle">
-            <div class="cSpanDivStyle">
-              <span> Reset </span>
-            </div>
-          </button>
-        </form>
-      </div>
+      <form on:submit|preventDefault={resetChat}>
+        <button type="submit" class="cIconButtonStyle">
+          <div class="cIconDivStyle">
+            <Icon icon="mdi:restart" class="cIconStyle" />
+          </div>
+        </button>
+      </form>
       <form on:submit|preventDefault={showChatLogModal}>
         <button type="submit" class="cIconButtonStyle">
           <div class="cIconDivStyle">
@@ -160,19 +136,59 @@
           <div
             class="absolute top-16 left-0 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-100 -ml-2"
           />
-          {#if latestAiOutput}
-            <span class={cTextSize(latestAiOutput)}>{latestAiOutput}</span>
-          {:else}
+          {#if latestAiOutput === null}
             <span>ゲームを始めよう！</span>
+          {:else}
+            <span class={cTextSize(latestAiOutput)}>{latestAiOutput}</span>
           {/if}
         </div>
       </div>
     </div>
 
+    <!-- 下部ボタン -->
+    <div class="flex items-center justify-center space-x-2">
+      {#if latestAiOutput === null}
+        <form on:submit|preventDefault={startGame}>
+          <button type="submit" class="cIconButtonStyle">
+            <div class={cButtonSpan}>
+              <span> はじめる </span>
+            </div>
+          </button>
+        </form>
+      {:else}
+        <form
+          on:submit|preventDefault={() => {
+            userInput = "はい";
+            sendMessage();
+          }}
+        >
+          <button type="submit" class="cIconButtonStyle">
+            <div class={cButtonSpan}>
+              <span> はい </span>
+            </div>
+          </button>
+        </form>
+        <form
+          on:submit|preventDefault={() => {
+            userInput = "いいえ";
+            sendMessage();
+          }}
+        >
+          <button type="submit" class="cIconButtonStyle">
+            <div class={cButtonSpan}>
+              <span> いいえ </span>
+            </div>
+          </button>
+        </form>
+      {/if}
+    </div>
+
+    <div class="h-6"><!--spacer--></div>
+
     <!-- 任意メッセージ送信 -->
     <div class="m-4">
       <div class="flex items-center justify-center space-x-2">
-        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="Type your message..." />
+        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="your message..." />
         <button on:click={sendMessage} class="cIconButtonStyle">
           <div class="cSpanDivStyle">
             <span> Send </span>
