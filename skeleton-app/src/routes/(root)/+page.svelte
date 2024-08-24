@@ -88,9 +88,9 @@
       return "text-base";
     }
     switch (true) {
-      case message.length > 80:
+      case message.length > 200:
         return "text-xs";
-      case message.length > 60:
+      case message.length > 100:
         return "text-sm";
       default:
         return "text-base";
@@ -127,15 +127,20 @@
     </div>
 
     <!-- Pokenator 表示 -->
-    <div class="mt-4 mb-4">
-      <div class="flex items-center justify-center space-x-2">
-        <div>
-          <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-24 h-24" />
+    <div class="m-4">
+      <div class="flex flex-col items-center justify-center">
+        <div class="w-24 h-24 mb-1">
+          <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-full h-full object-contain" />
         </div>
-        <div class="relative p-2 w-48 h-48 bg-gray-100 rounded-xl">
-          <div
-            class="absolute top-16 left-0 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-100 -ml-2"
-          />
+        <div
+          class="
+            border-b-8 border-b-gray-100
+            border-t-8 border-t-transparent
+            border-l-8 border-l-transparent
+            border-r-8 border-r-transparent
+          "
+        />
+        <div class="w-72 h-48 p-2 bg-gray-100 rounded-xl">
           {#if latestAiOutput === null}
             <span>ゲームを始めよう！</span>
           {:else}
