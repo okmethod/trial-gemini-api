@@ -132,7 +132,7 @@
   <!-- コンテンツ部 -->
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
-    <div class="flex items-center justify-center space-x-2">
+    <div class="flex items-center justify-end space-x-2 mr-8">
       <form on:submit|preventDefault={resetChat}>
         <button type="submit" class="cIconButtonStyle">
           <div class="cIconDivStyle">

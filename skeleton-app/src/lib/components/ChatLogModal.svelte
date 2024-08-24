@@ -34,7 +34,7 @@
                   </div>
                 {/each}
               {:else}
-                <span>No chat history</span>
+                <span>なし</span>
               {/if}
             </div>
           </div>
