@@ -12,7 +12,7 @@ export async function load(): Promise<{
   const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string) : null;
   const model = genAI?.getGenerativeModel(modelParams) ?? null;
 
-  const hogeTorusPokeIds = [641, 642, 645];
+  const hogeTorusPokeIds = [641, 642, 645, 905];
   const hogeTorusImageUrl = pickRandomElementsFromArray(hogeTorusPokeIds, 1).map((pokeId) =>
     imageUrlTemplate(pokeId),
   )[0];
