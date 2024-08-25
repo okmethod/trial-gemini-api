@@ -1,12 +1,11 @@
 <script lang="ts">
   import { getModalStore } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
+  import { MODELS } from "$lib/constants/modelSettings";
 
   export let parent;
   export let currentModel: string;
   export let selectModel: (selectedModel: string) => void;
-
-  const models = ["Model A", "Model B", "Model C"]; // モデルのリストを定義
 
   const modalStore = getModalStore();
 
@@ -30,7 +29,7 @@
         <div class="p-4 flex flex-col h-full">
           <h2 class="text-xl font-bold mb-2">モデル選択</h2>
           <div class="mt-4 space-y-2">
-            {#each models as model}
+            {#each MODELS as model, index}
               <label class="block">
                 <input
                   type="radio"
@@ -40,8 +39,12 @@
                   on:change={handleModelChange}
                   class="hidden peer"
                 />
-                <span class="flex flex-col w-full mx-auto text-center border rounded-lg peer-checked:bg-blue-200"
-                  >{model}
+                <span
+                  class="
+                    flex flex-col w-full mx-auto text-center border rounded-lg
+                    peer-checked:bg-blue-200"
+                >
+                  {model}{index === 0 ? " (default)" : ""}
                 </span>
               </label>
             {/each}
