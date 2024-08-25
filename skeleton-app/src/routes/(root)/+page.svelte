@@ -6,6 +6,7 @@
   import type { Chat } from "$lib/types/chat";
   import postChatReply from "$lib/api/postChatReply.client";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
+  import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import { defaultModelParams } from "$lib/constants/modelSettings";
   import { initialPrompt, initialGuide } from "./initialPrompt";
@@ -105,11 +106,26 @@
     };
   }
 
+  let currentModel = "Model A";
+  function showSelectModelModal(): void {
+    const modalComponent: ModalComponent = {
+      ref: SelectModelModal,
+      props: {
+        currentModel: currentModel,
+        selectModel: _selectModel,
+      },
+    };
+    function _selectModel(selectedModel: string): void {
+      currentModel = selectedModel;
+    }
+    const m = modalSettings(modalComponent);
+    modalStore.trigger(m);
+  }
+
   function showChatLogModal(): void {
     const modalComponent: ModalComponent = {
       ref: ChatLogModal,
       props: {
-        title: "チャットログ",
         chatHistory: chatHistory,
       },
     };
@@ -133,7 +149,15 @@
   <!-- コンテンツ部 -->
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
-    <div class="flex items-center justify-end space-x-2 mr-8">
+    <div class="flex items-center justify-between space-x-2 ml-8 mr-8">
+      <form on:submit|preventDefault={showSelectModelModal}>
+        <button type="submit" class="cIconButtonStyle">
+          <div class="cIconDivStyle">
+            <Icon icon="mdi:brain" class="cIconStyle" />
+          </div>
+        </button>
+      </form>
+      <div class="flex-grow"><!--spacer--></div>
       <form on:submit|preventDefault={resetGame}>
         <button type="submit" class="cIconButtonStyle">
           <div class="cIconDivStyle">
