@@ -18,6 +18,7 @@ export const authUrl = (): string => {
   const authBaseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
   const scopes = [
     "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/generative-language.tuning",
     "https://www.googleapis.com/auth/generative-language.retriever",
   ];
   const authUrl = `${authBaseUrl}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(" ")}&access_type=offline`;

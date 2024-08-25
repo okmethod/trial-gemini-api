@@ -1,9 +1,7 @@
 import type { ModelParams } from "@google/generative-ai";
 import { HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
-const DEFAULT_MODEL = "gemini-1.5-flash";
-const TUNED_MODELS = ["tunedModels/v1-nteipb5ttyxg"];
-export const MODELS = [DEFAULT_MODEL, ...TUNED_MODELS];
+export const DEFAULT_MODEL = "gemini-1.5-flash";
 
 const TOO_LOOSE_BLOCK = [
   {
