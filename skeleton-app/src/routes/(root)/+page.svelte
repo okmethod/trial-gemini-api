@@ -7,7 +7,7 @@
   import postChatReply from "$lib/api/postChatReply.client";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
-  import modelParams from "./modelParams";
+  import { defaultModelParams } from "$lib/constants/modelSettings";
   import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
@@ -30,7 +30,7 @@
       reply = response.response.text();
     } else {
       // production
-      const response = await postChatReply(window.fetch, modelParams, chatParam, userInput);
+      const response = await postChatReply(window.fetch, defaultModelParams(), chatParam, userInput);
       reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
     }
     return reply;
@@ -60,13 +60,13 @@
     userInput = "";
     aiOutput = await transMarkdownToSanitizedHtml(reply);
     turnCounter += 1;
-    gameStatus = updateGameStatus(turnCounter);
+    gameStatus = decideGameStatus(turnCounter);
     console.log(turnCounter);
   }
 
   type GameStatus = "init" | "onGame" | "giveUp" | "gameOver" | "unknown";
   const maxTurn = 12; // 最大10回答 -> 正解ポケモンこれかな？ -> 正解ポケモン教えて？
-  function updateGameStatus(turn: number): GameStatus {
+  function decideGameStatus(turn: number): GameStatus {
     switch (true) {
       case turn > maxTurn:
         return "gameOver";
@@ -81,16 +81,17 @@
     }
   }
 
-  function resetChat() {
+  function resetGame() {
     chatHistory = [];
+    turnCounter = 0;
+    gameStatus = decideGameStatus(turnCounter);
     userInput = "";
     aiOutput = initialGuide;
   }
 
   function startGame() {
-    resetChat();
+    resetGame();
     userInput = initialPrompt;
-    turnCounter = 0;
     sendMessage();
   }
 
@@ -133,7 +134,7 @@
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
     <div class="flex items-center justify-end space-x-2 mr-8">
-      <form on:submit|preventDefault={resetChat}>
+      <form on:submit|preventDefault={resetGame}>
         <button type="submit" class="cIconButtonStyle">
           <div class="cIconDivStyle">
             <Icon icon="mdi:restart" class="cIconStyle" />
@@ -220,7 +221,7 @@
           </button>
         </form>
       {:else}
-        <form on:submit|preventDefault={resetChat}>
+        <form on:submit|preventDefault={resetGame}>
           <button type="submit" class="cIconButtonStyle">
             <div class={cButtonSpan}>
               <span> リセット </span>

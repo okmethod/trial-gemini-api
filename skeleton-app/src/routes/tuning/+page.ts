@@ -1,7 +1,7 @@
 import type { LoadEvent } from "@sveltejs/kit";
 import type { GenerativeModel, InlineDataPart } from "@google/generative-ai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import modelParams from "./modelParams";
+import { defaultModelParams } from "$lib/constants/modelSettings";
 
 interface PokeDataWithoutImage {
   name: string;
@@ -44,7 +44,7 @@ export async function load({ fetch }: LoadEvent): Promise<{
   trainingPokeDict: Record<number, PokeData>;
 }> {
   const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string) : null;
-  const model = genAI?.getGenerativeModel(modelParams) ?? null;
+  const model = genAI?.getGenerativeModel(defaultModelParams()) ?? null;
   const trainingPokeDict = await _createTrainingPokeDict(pokeDict);
 
   async function _createTrainingPokeDict(
