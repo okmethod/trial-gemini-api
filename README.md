@@ -4,10 +4,12 @@
 
 ## ローカルでの起動方法
 
-- Gemini APIキーの登録
+- 各種クレデンシャル情報の登録
 
   ```sh
   echo "GEMINI_API_KEY=(Your API Key)" >> .env
+  echo "OAUTH2_CLIENT_ID=(Your ID)" >> .env
+  echo "OAUTH2_CLIENT_SECRET=(Your Secret)" >> .env
   ```
 
 - コンテナ起動

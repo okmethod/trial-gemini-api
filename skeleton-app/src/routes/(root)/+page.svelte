@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import type { GoogleGenerativeAI, StartChatParams } from "@google/generative-ai";
@@ -7,10 +6,11 @@
   import type { Chat } from "$lib/types/chat";
   import postChatReply from "$lib/api/postChatReply.client";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
+  import LocalAuthModal from "$lib/components/LocalAuthModal.svelte";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import { defaultModelParams } from "$lib/constants/modelSettings";
-  import { getAuthToken, requestOptions } from "$lib/utils/getAuthToken";
+  import { checkToken, requestOptions } from "$lib/utils/getAuthToken.client";
   import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
@@ -18,14 +18,11 @@
     hogeTorusImageUrl: string;
   };
 
-  let token = "";
-  onMount(async () => {
-    token = await getAuthToken();
-  });
-
   let currentModel: string | null = null;
   async function fetchChatReply(chatHistory: Chat[], userInput: string): Promise<string | null> {
-    const model = data.genAI?.getGenerativeModel(defaultModelParams(currentModel), requestOptions(token)) ?? null;
+    const model =
+      data.genAI?.getGenerativeModel(defaultModelParams(currentModel), token ? requestOptions(token) : undefined) ??
+      null;
     const chatParam: StartChatParams = {
       history: chatHistory.map((chat) => ({
         role: chat.role,
@@ -115,7 +112,22 @@
     };
   }
 
+  let token: string | null = null;
+  function showLocalAuthModal(): void {
+    const modalComponent: ModalComponent = {
+      ref: LocalAuthModal,
+      props: {},
+    };
+    const m = modalSettings(modalComponent);
+    modalStore.trigger(m);
+  }
+
   function showSelectModelModal(): void {
+    token = checkToken();
+    if (!token) {
+      showLocalAuthModal();
+      return;
+    }
     const modalComponent: ModalComponent = {
       ref: SelectModelModal,
       props: {
