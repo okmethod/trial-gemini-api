@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { GenerativeModel, StartChatParams } from "@google/generative-ai";
+  import { onMount } from "svelte";
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
+  import type { GoogleGenerativeAI, StartChatParams } from "@google/generative-ai";
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
   import postChatReply from "$lib/api/postChatReply.client";
@@ -9,14 +10,22 @@
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import { defaultModelParams } from "$lib/constants/modelSettings";
+  import { getAuthToken, requestOptions } from "$lib/utils/getAuthToken";
   import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
-    model: GenerativeModel | null;
+    genAI: GoogleGenerativeAI | null;
     hogeTorusImageUrl: string;
   };
 
+  let token = "";
+  onMount(async () => {
+    token = await getAuthToken();
+  });
+
+  let currentModel: string | null = null;
   async function fetchChatReply(chatHistory: Chat[], userInput: string): Promise<string | null> {
+    const model = data.genAI?.getGenerativeModel(defaultModelParams(currentModel), requestOptions(token)) ?? null;
     const chatParam: StartChatParams = {
       history: chatHistory.map((chat) => ({
         role: chat.role,
@@ -24,14 +33,14 @@
       })),
     };
     let reply: string | null;
-    if (data?.model) {
+    if (model) {
       // development
-      const chat = data.model.startChat(chatParam);
+      const chat = model.startChat(chatParam);
       const response = await chat.sendMessage(userInput);
       reply = response.response.text();
     } else {
       // production
-      const response = await postChatReply(window.fetch, defaultModelParams(), chatParam, userInput);
+      const response = await postChatReply(window.fetch, defaultModelParams(currentModel), chatParam, userInput);
       reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
     }
     return reply;
@@ -62,7 +71,7 @@
     aiOutput = await transMarkdownToSanitizedHtml(reply);
     turnCounter += 1;
     gameStatus = decideGameStatus(turnCounter);
-    console.log(turnCounter);
+    console.debug("turn:", turnCounter);
   }
 
   type GameStatus = "init" | "onGame" | "giveUp" | "gameOver" | "unknown";
@@ -106,7 +115,6 @@
     };
   }
 
-  let currentModel = "Model A";
   function showSelectModelModal(): void {
     const modalComponent: ModalComponent = {
       ref: SelectModelModal,
