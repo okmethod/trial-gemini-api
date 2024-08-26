@@ -20,11 +20,13 @@ export async function fetchChatReply(
     })),
   };
 
+  const token = checkToken();
+
   let reply: string | null;
   if (apiKey) {
     // local
     try {
-      const response = await generateChatReply(apiKey, modelName, chatParam, userInput);
+      const response = await generateChatReply(apiKey, modelName, token, chatParam, userInput);
       reply = response.response.text();
     } catch (error) {
       console.error("Failed to receive chat reply in local:", error);
@@ -33,7 +35,13 @@ export async function fetchChatReply(
   } else {
     // production
     try {
-      const response = await postChatReply(fetchFunction, defaultModelParams(modelName), chatParam, userInput);
+      const response = await postChatReply(
+        fetchFunction,
+        defaultModelParams(modelName),
+        requestOptions(token),
+        chatParam,
+        userInput,
+      );
       reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
     } catch (error) {
       console.error("Failed to receive chat reply in production:", error);
@@ -46,18 +54,21 @@ export async function fetchChatReply(
 async function generateChatReply(
   apiKey: string,
   modelName: string | null,
+  token: string | null,
   chatParam: StartChatParams,
   userInput: string,
 ): Promise<GenerateContentResult> {
   const genAI = new GoogleGenerativeAI(apiKey);
-  const token = checkToken();
-  const model = genAI.getGenerativeModel(defaultModelParams(modelName), token ? requestOptions(token) : undefined);
+  const model = genAI.getGenerativeModel(defaultModelParams(modelName), requestOptions(token));
   const chat = model.startChat(chatParam);
   const response = await chat.sendMessage(userInput);
   return response;
 }
 
-const requestOptions = (token: string): RequestOptions => {
+const requestOptions = (token: string | null): RequestOptions | undefined => {
+  if (!token) {
+    return undefined;
+  }
   const headers = {
     Authorization: `Bearer ${token}`,
   };

@@ -5,12 +5,14 @@ import * as functions from "firebase-functions";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type {
   ModelParams,
+  RequestOptions,
   StartChatParams,
   GenerateContentResult,
 } from "@google/generative-ai";
 
 interface RequestBody {
   modelParams: ModelParams;
+  requestOptions: RequestOptions | undefined;
   startChatParams: StartChatParams;
   userInput: string;
 }
@@ -33,8 +35,13 @@ const chatReply = async (req: Request, res: Response) => {
     return;
   }
 
-  const { modelParams, startChatParams, userInput } = requestBody;
-  if ( !modelParams || !startChatParams || !userInput ) {
+  const {
+    modelParams,
+    requestOptions,
+    startChatParams,
+    userInput,
+  } = requestBody;
+  if ( !modelParams || !requestOptions || !startChatParams || !userInput ) {
     res.status(400).json({
       error: "Missing required parameters",
       details: requestBody,
@@ -55,7 +62,7 @@ const chatReply = async (req: Request, res: Response) => {
 
   let response: GenerateContentResult;
   try {
-    const model = genAI.getGenerativeModel(modelParams);
+    const model = genAI.getGenerativeModel(modelParams, requestOptions);
     const chat = model.startChat(startChatParams);
     response = await chat.sendMessage(userInput);
   } catch (err) {
