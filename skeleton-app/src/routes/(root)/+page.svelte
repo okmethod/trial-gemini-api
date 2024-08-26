@@ -4,7 +4,7 @@
   import type { GoogleGenerativeAI, StartChatParams } from "@google/generative-ai";
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
-  import postChatReply from "$lib/api/postChatReply.client";
+  import postChatReply from "$lib/api/functions/postChatReply.client";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import LocalAuthModal from "$lib/components/LocalAuthModal.svelte";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
