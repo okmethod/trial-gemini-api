@@ -1,3 +1,3 @@
 import { writable } from "svelte/store";
 
-export const idToken = writable<string | null>(null);
+export const accessToken = writable<string | null>(null);

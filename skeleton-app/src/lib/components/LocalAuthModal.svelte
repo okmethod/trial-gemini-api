@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getModalStore } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
-  import { idToken } from "$lib/stores/auth";
+  import { accessToken } from "$lib/stores/auth";
   import { authUrl, authToken } from "$lib/utils/auth";
 
   export let parent;
@@ -15,7 +15,7 @@
     switch (step) {
       case "inputAuthCode":
         token = await authToken(window.fetch, authCode);
-        idToken.set(token);
+        accessToken.set(token);
         step = "term";
         break;
       case "term":

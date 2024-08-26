@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { idToken } from "$lib/stores/auth";
+import { accessToken } from "$lib/stores/auth";
 
 const projectId = "gen-lang-client-0287279129";
 
@@ -12,7 +12,7 @@ interface TunedModel {
 
 async function getTunedModels(fetchFunction: typeof fetch): Promise<TunedModel[]> {
   const apiUrl = "https://generativelanguage.googleapis.com/v1beta/tunedModels";
-  const token = get(idToken);
+  const token = get(accessToken);
 
   try {
     const response = await fetchFunction(apiUrl, {

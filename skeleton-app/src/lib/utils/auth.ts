@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import type { RequestOptions } from "@google/generative-ai";
-import { idToken } from "$lib/stores/auth";
+import { accessToken } from "$lib/stores/auth";
 import postGetToken from "$lib/api/functions/postGetToken.client";
 import postTokenEndpoint from "$lib/api/postTokenEndpoint.client";
 import { OAUTH2_CLIENT_ID as clientId, REDIRECT_URI as redirectUri } from "$lib/constants/common";
@@ -8,7 +8,7 @@ import { OAUTH2_CLIENT_ID as clientId, REDIRECT_URI as redirectUri } from "$lib/
 const clientSecret = process.env.OAUTH2_CLIENT_SECRET ? (process.env.OAUTH2_CLIENT_SECRET as string) : null;
 
 export function checkToken(): string | null {
-  const token = get(idToken);
+  const token = get(accessToken);
   if (!token) return null;
   // if (isTokenExpired(token)) return null; // TODO: 実装したい
   return token;
@@ -40,7 +40,7 @@ export const authToken = async (fetchFunction: typeof fetch, authCode: string): 
     try {
       token = await postTokenEndpoint(fetchFunction, clientId, clientSecret, redirectUri, authCode);
     } catch (error) {
-      console.error("Failed to get authToken in local,", error);
+      console.error("Failed to get authToken in local:", error);
       return null;
     }
   } else {
@@ -48,7 +48,7 @@ export const authToken = async (fetchFunction: typeof fetch, authCode: string): 
     try {
       token = await postGetToken(fetchFunction, authCode);
     } catch (error) {
-      console.error("Failed to get authToken in production,", error);
+      console.error("Failed to get authToken in production:", error);
       return null;
     }
   }
