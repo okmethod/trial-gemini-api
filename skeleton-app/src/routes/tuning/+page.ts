@@ -1,7 +1,5 @@
 import type { LoadEvent } from "@sveltejs/kit";
-import type { GenerativeModel, InlineDataPart } from "@google/generative-ai";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { defaultModelParams } from "$lib/constants/modelSettings";
+import type { InlineDataPart } from "@google/generative-ai";
 
 interface PokeDataWithoutImage {
   name: string;
@@ -40,11 +38,8 @@ const promptTemplate = (pokeName: string) =>
   `これは ${pokeName} の画像です。この画像から外見的な特徴を抽出してください`;
 
 export async function load({ fetch }: LoadEvent): Promise<{
-  model: GenerativeModel | null;
   trainingPokeDict: Record<number, PokeData>;
 }> {
-  const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string) : null;
-  const model = genAI?.getGenerativeModel(defaultModelParams()) ?? null;
   const trainingPokeDict = await _createTrainingPokeDict(pokeDict);
 
   async function _createTrainingPokeDict(
@@ -68,7 +63,7 @@ export async function load({ fetch }: LoadEvent): Promise<{
     return trainingPokeDict;
   }
 
-  return { model, trainingPokeDict };
+  return { trainingPokeDict };
 }
 
 async function urlToGenerativePart(

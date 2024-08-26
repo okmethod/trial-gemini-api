@@ -3,7 +3,7 @@
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
-  import { fetchChatReply } from "$lib/utils/generativeChat";
+  import { fetchChatReply } from "$lib/utils/generativeLanguage";
   import { checkToken } from "$lib/utils/auth";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import LocalAuthModal from "$lib/components/LocalAuthModal.svelte";
