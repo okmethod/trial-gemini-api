@@ -3,6 +3,7 @@
 import * as express from "express";
 import * as cors from "cors";
 import * as functions from "firebase-functions";
+import getToken from "./getToken";
 import chatReply from "./chatReply";
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(
   })
 );
 
+app.post("/api/get-token", getToken);
 app.post("/api/chat-reply", chatReply);
 
 exports.api = functions.region("asia-northeast1").https.onRequest(app);
