@@ -15,7 +15,7 @@
   let isLoading = true;
   onMount(async () => {
     try {
-      const tunedModels = await getTunedModels();
+      const tunedModels = await getTunedModels(window.fetch);
       // TODO: 表示名やらステータスのフィルタリングやら調整する
       models = [...models, ...tunedModels.map((model) => model.name)];
     } catch (error) {

@@ -10,12 +10,12 @@ interface TunedModel {
   state: string;
 }
 
-async function getTunedModels(): Promise<TunedModel[]> {
+async function getTunedModels(fetchFunction: typeof fetch): Promise<TunedModel[]> {
   const apiUrl = "https://generativelanguage.googleapis.com/v1beta/tunedModels";
   const token = get(idToken);
 
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetchFunction(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
