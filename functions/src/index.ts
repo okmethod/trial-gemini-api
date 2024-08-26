@@ -56,15 +56,15 @@ app.post("/api/chat-reply", async (req, res) => {
     return;
   }
 
-  const apiKey = functions.config().api?.key;
-  if (!apiKey) {
-    res.status(500).json({ error: "API key not configured" });
+  const geminiApiKey = functions.config().api?.geminiapikey;
+  if (!geminiApiKey) {
+    res.status(500).json({ error: "Gemini API Key not configured" });
     return;
   }
 
   let genAI: GoogleGenerativeAI | null = null;
   try {
-    genAI = new GoogleGenerativeAI(apiKey);
+    genAI = new GoogleGenerativeAI(geminiApiKey);
   } catch (err) {
     console.error(err);
   }
