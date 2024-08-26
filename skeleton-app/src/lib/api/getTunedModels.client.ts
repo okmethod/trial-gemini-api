@@ -1,6 +1,5 @@
 import { checkToken } from "$lib/utils/auth";
-
-const projectId = "gen-lang-client-0287279129";
+import { GOOGLE_CLOUD_PROJECT as projectId } from "$lib/constants/common";
 
 interface TunedModel {
   name: string;
@@ -12,18 +11,19 @@ interface TunedModel {
 async function getTunedModels(fetchFunction: typeof fetch): Promise<TunedModel[]> {
   const apiUrl = "https://generativelanguage.googleapis.com/v1beta/tunedModels";
   const token = checkToken();
-
+  const requestInit: RequestInit = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "x-goog-user-project": projectId,
+    },
+  };
   try {
-    const response = await fetchFunction(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "x-goog-user-project": projectId,
-      },
-    });
+    const response = await fetchFunction(apiUrl, requestInit);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      console.error("Failed to fetch tuned models:", response.status);
+      return [];
     }
     const data = (await response.json()) as { tunedModels: TunedModel[] };
     return data.tunedModels;

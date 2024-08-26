@@ -14,19 +14,21 @@ async function postChatReply(
   startChatParams: StartChatParams,
   userInput: string,
 ): Promise<GenerateContentResult> {
-  const requestInit: RequestInit = {};
+  const apiUrl = "/api/chat-reply";
   const requestBody: RequestBody = { modelParams, requestOptions, startChatParams, userInput };
-  const requestConfig = {
-    ...requestInit,
+  const requestInit: RequestInit = {
     method: "POST",
     body: JSON.stringify(requestBody),
   };
   try {
-    const response = await fetchFunction("/api/chat-reply", requestConfig);
+    const response = await fetchFunction(apiUrl, requestInit);
+    if (!response.ok) {
+      throw new Error("Failed to receive generatedContent.");
+    }
     const data = (await response.json()) as GenerateContentResult;
     return data;
   } catch (error) {
-    console.error("Failed to fetch GoogleGenerativeAI:", error);
+    console.error("Failed to receive generatedContent:", error);
     throw error;
   }
 }
