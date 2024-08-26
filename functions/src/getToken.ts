@@ -9,11 +9,8 @@ interface RequestBody {
 }
 
 const getToken = async (req: Request, res: Response) => {
-  const clientId = functions.config().api?.oauthclientid;
-  if (!clientId) {
-    res.status(500).json({ error: "OAuth Client Id not configured" });
-    return;
-  }
+  // eslint-disable-next-line max-len
+  const clientId = "662755261780-1rlodo5nvjrmajmru33ejjpmtcal7b22.apps.googleusercontent.com";
   const clientSecret = functions.config().api?.oauthclientsecret;
   if (!clientSecret) {
     res.status(500).json({ error: "OAuth Client Secret not configured" });

@@ -8,7 +8,6 @@
 
   ```sh
   echo "GEMINI_API_KEY=(Your API Key)" >> .env
-  echo "OAUTH2_CLIENT_ID=(Client ID)" >> .env
   echo "OAUTH2_CLIENT_SECRET=(Client Secret)" >> .env
   ```
 
@@ -28,7 +27,6 @@
 
   ```sh
   firebase functions:config:set api.geminiapikey="(Your API Key)"
-  firebase functions:config:set api.oauthclientid="(Client ID)"
   firebase functions:config:set api.oauthclientsecret="(Client Secret)"
   firebase deploy --only functions
   ```
