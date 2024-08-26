@@ -33,7 +33,7 @@ export const authUrl = (): string => {
   return authUrl;
 };
 
-export const authToken = async (fetchFunction: typeof fetch, authCode: string): Promise<string> => {
+export const authToken = async (fetchFunction: typeof fetch, authCode: string): Promise<string | null> => {
   let token: string;
   if (clientSecret) {
     // local
@@ -41,7 +41,7 @@ export const authToken = async (fetchFunction: typeof fetch, authCode: string): 
       token = await postTokenEndpoint(fetchFunction, clientId, clientSecret, redirectUri, authCode);
     } catch (error) {
       console.error("Failed to get authToken in local,", error);
-      throw error;
+      return null;
     }
   } else {
     // production
@@ -49,7 +49,7 @@ export const authToken = async (fetchFunction: typeof fetch, authCode: string): 
       token = await postGetToken(fetchFunction, authCode);
     } catch (error) {
       console.error("Failed to get authToken in production,", error);
-      throw error;
+      return null;
     }
   }
   return token;

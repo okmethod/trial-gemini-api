@@ -14,12 +14,8 @@
   const handleNext = async () => {
     switch (step) {
       case "inputAuthCode":
-        try {
-          token = await authToken(window.fetch, authCode);
-          idToken.set(token);
-        } catch (error) {
-          console.error(error);
-        }
+        token = await authToken(window.fetch, authCode);
+        idToken.set(token);
         step = "term";
         break;
       case "term":
