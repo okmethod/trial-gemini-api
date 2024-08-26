@@ -2,9 +2,9 @@ deploy-app:
 	cd skeleton-app && npm run build
 	firebase deploy --only hosting
 
-deploy-function:
+deploy-functions:
 	firebase deploy --only functions
 
 deploy:
-	deploy-functions
-	deploy-hosting
+	make deploy-functions
+	make deploy-app
