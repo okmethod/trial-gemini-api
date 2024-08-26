@@ -1,6 +1,11 @@
 import { get } from "svelte/store";
 import type { RequestOptions } from "@google/generative-ai";
 import { idToken } from "$lib/stores/auth";
+import postGetToken from "$lib/api/functions/postGetToken.client";
+import postTokenEndpoint from "$lib/api/postTokenEndpoint.client";
+import { OAUTH2_CLIENT_ID as clientId, REDIRECT_URI as redirectUri } from "$lib/constants/common";
+
+const clientSecret = process.env.OAUTH2_CLIENT_SECRET ? (process.env.OAUTH2_CLIENT_SECRET as string) : null;
 
 export function checkToken(): string | null {
   const token = get(idToken);
@@ -9,19 +14,45 @@ export function checkToken(): string | null {
   return token;
 }
 
-const clientId = process.env.OAUTH2_CLIENT_ID as string;
-
-export const redirectUri = "urn:ietf:wg:oauth:2.0:oob";
-
 export const authUrl = (): string => {
-  const authBaseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
   const scopes = [
     "https://www.googleapis.com/auth/cloud-platform",
     "https://www.googleapis.com/auth/generative-language.tuning",
     "https://www.googleapis.com/auth/generative-language.retriever",
   ];
-  const authUrl = `${authBaseUrl}?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(" ")}&access_type=offline`;
+
+  const params = new URLSearchParams();
+  params.append("response_type", "code");
+  params.append("client_id", clientId);
+  params.append("redirect_uri", redirectUri);
+  params.append("scope", scopes.join(" "));
+  params.append("access_type", "offline");
+
+  const authBaseUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+  const authUrl = `${authBaseUrl}?${params.toString()}`;
   return authUrl;
+};
+
+export const authToken = async (fetchFunction: typeof fetch, authCode: string): Promise<string> => {
+  let token: string;
+  if (clientSecret) {
+    // local
+    try {
+      token = await postTokenEndpoint(fetchFunction, clientId, clientSecret, redirectUri, authCode);
+    } catch (error) {
+      console.error("Failed to get authToken in local,", error);
+      throw error;
+    }
+  } else {
+    // production
+    try {
+      token = await postGetToken(fetchFunction, authCode);
+    } catch (error) {
+      console.error("Failed to get authToken in production,", error);
+      throw error;
+    }
+  }
+  return token;
 };
 
 export const requestOptions = (token: string): RequestOptions => {

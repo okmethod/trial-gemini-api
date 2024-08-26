@@ -2,8 +2,7 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import { idToken } from "$lib/stores/auth";
-  import postTokenEndpoint from "$lib/api/postTokenEndpoint.client";
-  import { authUrl } from "$lib/utils/getAuthToken.client";
+  import { authUrl, authToken } from "$lib/utils/getAuthToken.client";
 
   export let parent;
 
@@ -16,7 +15,7 @@
     switch (step) {
       case "inputAuthCode":
         try {
-          token = await postTokenEndpoint(authCode);
+          token = await authToken(window.fetch, authCode);
           idToken.set(token);
         } catch (error) {
           console.error(error);

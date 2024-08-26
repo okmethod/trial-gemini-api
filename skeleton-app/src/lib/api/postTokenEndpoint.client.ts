@@ -1,9 +1,10 @@
-import { redirectUri } from "$lib/utils/getAuthToken.client";
-
-const clientId = process.env.OAUTH2_CLIENT_ID as string;
-const clientSecret = process.env.OAUTH2_CLIENT_SECRET as string;
-
-async function postTokenEndpoint(authCode: string): Promise<string> {
+async function postTokenEndpoint(
+  fetchFunction: typeof fetch,
+  clientId: string,
+  clientSecret: string,
+  redirectUri: string,
+  authCode: string,
+): Promise<string> {
   const params = new URLSearchParams();
   params.append("grant_type", "authorization_code");
   params.append("client_id", clientId);
@@ -12,7 +13,7 @@ async function postTokenEndpoint(authCode: string): Promise<string> {
   params.append("code", authCode);
 
   const tokenEndpoint = "https://oauth2.googleapis.com/token";
-  const response = await fetch(tokenEndpoint, {
+  const response = await fetchFunction(tokenEndpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
