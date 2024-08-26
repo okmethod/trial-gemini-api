@@ -22,7 +22,7 @@ const TOO_LOOSE_BLOCK = [
   },
 ];
 
-export const defaultModelParams = (model: string | null): ModelParams => ({
-  model: model ?? DEFAULT_MODEL,
+export const defaultModelParams = (modelName: string | null): ModelParams => ({
+  model: modelName ?? DEFAULT_MODEL,
   safetySettings: TOO_LOOSE_BLOCK,
 });

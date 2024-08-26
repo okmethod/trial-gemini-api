@@ -1,48 +1,21 @@
 <script lang="ts">
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
-  import type { GoogleGenerativeAI, StartChatParams } from "@google/generative-ai";
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
-  import postChatReply from "$lib/api/functions/postChatReply.client";
+  import { fetchChatReply } from "$lib/utils/generativeChat";
+  import { checkToken } from "$lib/utils/auth";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import LocalAuthModal from "$lib/components/LocalAuthModal.svelte";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
-  import { defaultModelParams } from "$lib/constants/modelSettings";
-  import { checkToken, requestOptions } from "$lib/utils/auth";
   import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
-    genAI: GoogleGenerativeAI | null;
     hogeTorusImageUrl: string;
   };
 
-  let currentModel: string | null = null;
-  async function fetchChatReply(chatHistory: Chat[], userInput: string): Promise<string | null> {
-    const model =
-      data.genAI?.getGenerativeModel(defaultModelParams(currentModel), token ? requestOptions(token) : undefined) ??
-      null;
-    const chatParam: StartChatParams = {
-      history: chatHistory.map((chat) => ({
-        role: chat.role,
-        parts: [{ text: chat.parts }],
-      })),
-    };
-    let reply: string | null;
-    if (model) {
-      // development
-      const chat = model.startChat(chatParam);
-      const response = await chat.sendMessage(userInput);
-      reply = response.response.text();
-    } else {
-      // production
-      const response = await postChatReply(window.fetch, defaultModelParams(currentModel), chatParam, userInput);
-      reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
-    }
-    return reply;
-  }
-
+  let currentModelName: string | null = null;
   const FailedAiOutput = "今日はもう、つかれちゃったよ...";
 
   let chatHistory: Chat[] = [];
@@ -54,11 +27,9 @@
     if (userInput.trim() === "") return;
     chatHistory = [...chatHistory, { role: "user", parts: userInput }];
 
-    let reply: string;
-    try {
-      reply = (await fetchChatReply(chatHistory, userInput)) ?? FailedAiOutput;
-    } catch (error) {
-      console.error(error);
+    let reply: string | null;
+    reply = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
+    if (!reply) {
       reply = FailedAiOutput;
       turnCounter += 99;
     }
@@ -131,12 +102,12 @@
     const modalComponent: ModalComponent = {
       ref: SelectModelModal,
       props: {
-        currentModel: currentModel,
+        currentModel: currentModelName,
         selectModel: _selectModel,
       },
     };
-    function _selectModel(selectedModel: string): void {
-      currentModel = selectedModel;
+    function _selectModel(selectedModelName: string): void {
+      currentModelName = selectedModelName;
     }
     const m = modalSettings(modalComponent);
     modalStore.trigger(m);

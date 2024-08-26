@@ -6,7 +6,7 @@
   import { onMount } from "svelte";
 
   export let parent;
-  export let currentModel: string;
+  export let currentModelName: string;
   export let selectModel: (selectedModel: string) => void;
 
   const modalStore = getModalStore();
@@ -28,9 +28,9 @@
   function handleModelChange(event: Event) {
     const target = event.target as HTMLInputElement | null;
     if (target) {
-      currentModel = target.value;
+      currentModelName = target.value;
     }
-    selectModel(currentModel);
+    selectModel(currentModelName);
   }
 
   function closeModal() {
@@ -54,7 +54,7 @@
                     type="radio"
                     name="model"
                     value={model}
-                    bind:group={currentModel}
+                    bind:group={currentModelName}
                     on:change={handleModelChange}
                     class="hidden peer"
                   />

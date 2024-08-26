@@ -1,5 +1,4 @@
 import { get } from "svelte/store";
-import type { RequestOptions } from "@google/generative-ai";
 import { accessToken } from "$lib/stores/auth";
 import postGetToken from "$lib/api/functions/postGetToken.client";
 import postTokenEndpoint from "$lib/api/postTokenEndpoint.client";
@@ -53,13 +52,4 @@ export const authToken = async (fetchFunction: typeof fetch, authCode: string): 
     }
   }
   return token;
-};
-
-export const requestOptions = (token: string): RequestOptions => {
-  const headers = {
-    Authorization: `Bearer ${token}`,
-  };
-  return {
-    customHeaders: headers,
-  };
 };
