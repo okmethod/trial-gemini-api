@@ -10,7 +10,7 @@
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import { defaultModelParams } from "$lib/constants/modelSettings";
-  import { checkToken, requestOptions } from "$lib/utils/getAuthToken.client";
+  import { checkToken, requestOptions } from "$lib/utils/auth";
   import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {

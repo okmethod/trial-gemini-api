@@ -2,7 +2,7 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import { idToken } from "$lib/stores/auth";
-  import { authUrl, authToken } from "$lib/utils/getAuthToken.client";
+  import { authUrl, authToken } from "$lib/utils/auth";
 
   export let parent;
 
