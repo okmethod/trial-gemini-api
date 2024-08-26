@@ -102,7 +102,7 @@
     const modalComponent: ModalComponent = {
       ref: SelectModelModal,
       props: {
-        currentModel: currentModelName,
+        currentModelName: currentModelName,
         selectModel: _selectModel,
       },
     };
