@@ -7,6 +7,7 @@
   import { fetchText } from "$lib/utils/generativeLanguage";
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
+  import { downloadFile } from "$lib/utils/download.client";
   import AuthModal from "$lib/components/AuthModal.svelte";
   import type { PokeData } from "./+page";
 
@@ -58,9 +59,20 @@
     toastStore.trigger(t);
   }
 
+  // モデル一覧取得
   let tunedModels: TunedModel[] = [];
   async function updateModels() {
     tunedModels = await getTunedModels(window.fetch);
+  }
+  let tunedModelsJsonFileName = "tunedModels.json";
+  async function downloadTunedModelsJson() {
+    const filteredModels = tunedModels.map((model) => ({
+      name: model.name,
+      displayName: model.displayName,
+      updateTime: model.updateTime,
+      state: model.state,
+    }));
+    void downloadFile(JSON.stringify(filteredModels, null, 2), tunedModelsJsonFileName, "application/json");
   }
 
   // 画像解釈
@@ -161,6 +173,21 @@
             </table>
           </div>
         </div>
+      </div>
+      <div class="cInputFormAndMessagePartStyle">
+        <input
+          type="text"
+          id="tunedModelsJsonFileName"
+          bind:value={tunedModelsJsonFileName}
+          class="border rounded px-4 py-1 h-full"
+        />
+        <form on:submit|preventDefault={downloadTunedModelsJson}>
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
+            <div class="cIconDivStyle">
+              <Icon icon="mdi:download-box-outline" class="cIconStyle" />
+            </div>
+          </button>
+        </form>
       </div>
 
       <div class="flex flex-col md:flex-row space-x-3">

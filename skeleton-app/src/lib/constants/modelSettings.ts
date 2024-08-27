@@ -2,21 +2,29 @@ import type { ModelParams } from "@google/generative-ai";
 import { HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import type { TunedModel } from "$lib/types/model";
 
-const DEFAULT_MODEL = "gemini-1.5-flash";
-export const ALLOWED_MODELS: TunedModel[] = [
-  {
-    name: "gemini-1.5-flash",
-    displayName: "デフォルト",
-    updateTime: "-",
-    state: "ACTIVE",
-  },
+const DEFAULT_MODEL: TunedModel = {
+  name: "gemini-1.5-flash",
+  displayName: "デフォルト",
+  updateTime: "-",
+  state: "ACTIVE",
+};
+
+const TUNED_MODELS: TunedModel[] = [
   {
     name: "tunedModels/v1-nteipb5ttyxg",
     displayName: "ポケモン学習v1",
     updateTime: "2024-08-25T00:55:51.907213Z",
     state: "ACTIVE",
   },
+  {
+    name: "tunedModels/v11-7jwr4cv5rdj5",
+    displayName: "ポケモン学習v1.1",
+    updateTime: "2024-08-27T13:55:16.325644Z",
+    state: "CREATING",
+  },
 ];
+
+export const ALLOWED_MODELS = [DEFAULT_MODEL, ...TUNED_MODELS.filter((model) => model.state === "ACTIVE")];
 
 const TOO_LOOSE_BLOCK = [
   {
@@ -38,6 +46,6 @@ const TOO_LOOSE_BLOCK = [
 ];
 
 export const defaultModelParams = (modelName: string | null): ModelParams => ({
-  model: modelName ?? DEFAULT_MODEL,
+  model: modelName ?? DEFAULT_MODEL.name,
   safetySettings: TOO_LOOSE_BLOCK,
 });
