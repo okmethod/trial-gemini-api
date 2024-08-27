@@ -5,9 +5,7 @@
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/utils/generativeLanguage";
-  import { checkToken } from "$lib/utils/auth";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
-  import LocalAuthModal from "$lib/components/LocalAuthModal.svelte";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
   import { initialPrompt, initialGuide } from "./initialPrompt";
@@ -111,22 +109,7 @@
     };
   }
 
-  let token: string | null = null;
-  function showLocalAuthModal(): void {
-    const modalComponent: ModalComponent = {
-      ref: LocalAuthModal,
-      props: {},
-    };
-    const m = modalSettings(modalComponent);
-    modalStore.trigger(m);
-  }
-
   function showSelectModelModal(): void {
-    token = checkToken();
-    if (!token) {
-      showLocalAuthModal();
-      return;
-    }
     const modalComponent: ModalComponent = {
       ref: SelectModelModal,
       props: {
