@@ -1,30 +1,13 @@
 <script lang="ts">
   import { getModalStore } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
-  import getTunedModels from "$lib/api/getTunedModels.client";
-  import { DEFAULT_MODEL } from "$lib/constants/modelSettings";
-  import { onMount } from "svelte";
+  import { ALLOWED_MODELS } from "$lib/constants/modelSettings";
 
   export let parent;
   export let currentModelName: string;
   export let selectModel: (selectedModel: string) => void;
 
   const modalStore = getModalStore();
-
-  let models: string[] = [DEFAULT_MODEL];
-  let isLoading = true;
-  onMount(async () => {
-    try {
-      const tunedModels = await getTunedModels(window.fetch);
-      // TODO: 表示名やらステータスのフィルタリングやら調整する
-      models = [...models, ...tunedModels.map((model) => model.name)];
-    } catch (error) {
-      console.error("Failed to load models:", error);
-    } finally {
-      isLoading = false;
-    }
-  });
-
   function handleModelChange(event: Event) {
     const target = event.target as HTMLInputElement | null;
     if (target) {
@@ -45,29 +28,25 @@
         <div class="p-4 flex flex-col h-full">
           <h2 class="text-xl font-bold mb-2">モデル選択</h2>
           <div class="mt-4 space-y-2">
-            {#if isLoading}
-              <span>Loading models...</span>
-            {:else}
-              {#each models as model, index}
-                <label class="block">
-                  <input
-                    type="radio"
-                    name="model"
-                    value={model}
-                    bind:group={currentModelName}
-                    on:change={handleModelChange}
-                    class="hidden peer"
-                  />
-                  <span
-                    class="
+            {#each ALLOWED_MODELS as model}
+              <label class="block">
+                <input
+                  type="radio"
+                  name="model"
+                  value={model.name}
+                  bind:group={currentModelName}
+                  on:change={handleModelChange}
+                  class="hidden peer"
+                />
+                <span
+                  class="
                     flex flex-col w-full mx-auto text-center border rounded-lg
                     peer-checked:bg-blue-200"
-                  >
-                    {model}{index === 0 ? " (default)" : ""}
-                  </span>
-                </label>
-              {/each}
-            {/if}
+                >
+                  {model.displayName}
+                </span>
+              </label>
+            {/each}
           </div>
         </div>
       </div>

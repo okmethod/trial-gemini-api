@@ -1,12 +1,6 @@
+import type { TunedModel } from "$lib/types/model";
 import { checkToken } from "$lib/utils/auth";
 import { GOOGLE_CLOUD_PROJECT as projectId } from "$lib/constants/common";
-
-interface TunedModel {
-  name: string;
-  displayName: string;
-  createTime: string;
-  state: string;
-}
 
 async function getTunedModels(fetchFunction: typeof fetch): Promise<TunedModel[]> {
   const apiUrl = "https://generativelanguage.googleapis.com/v1beta/tunedModels";
