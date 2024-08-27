@@ -4,6 +4,7 @@
   import Icon from "@iconify/svelte";
   import type { TunedModel } from "$lib/types/model";
   import getTunedModels from "$lib/api/genlang/getTunedModels.client";
+  import postTunedModelsPermissions from "$lib/api/genlang/postTunedModelsPermissions.client";
   import { fetchText } from "$lib/utils/generativeLanguage";
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
@@ -158,6 +159,7 @@
                   <th>displayName</th>
                   <th>date</th>
                   <th>state</th>
+                  <th>grant</th>
                 </tr>
               </thead>
               <tbody>
@@ -167,6 +169,21 @@
                     <td>{model.displayName}</td>
                     <td>{formatDateToJST(model.updateTime)}</td>
                     <td>{model.state}</td>
+                    <td>
+                      <button>
+                        <form on:submit|preventDefault={() => postTunedModelsPermissions(window.fetch, model.name)}>
+                          <button
+                            type="submit"
+                            disabled={isProcessing}
+                            class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
+                          >
+                            <div class="cIconDivStyle">
+                              <Icon icon="mdi:lock-open-plus-outline" class="cIconStyle" />
+                            </div>
+                          </button>
+                        </form>
+                      </button>
+                    </td>
                   </tr>
                 {/each}
               </tbody>
