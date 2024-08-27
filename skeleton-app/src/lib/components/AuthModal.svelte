@@ -5,6 +5,7 @@
   import { authUrl, authToken } from "$lib/utils/auth";
 
   export let parent;
+  export let setToken: (token: string | null) => void;
 
   const modalStore = getModalStore();
 
@@ -16,6 +17,7 @@
       case "inputAuthCode":
         token = await authToken(window.fetch, authCode);
         accessToken.set(token);
+        setToken(token);
         step = "term";
         break;
       case "term":
@@ -36,7 +38,7 @@
     <div class="relative min-w-80">
       <div class="h-full h-full bg-white rounded-lg">
         <div class="p-4 flex flex-col h-full">
-          <h2 class="text-xl font-bold mb-2">モデル切り替え</h2>
+          <h2 class="text-xl font-bold mb-2">アクセストークン取得</h2>
           <div class="mt-4 space-y-10">
             <div class="m-4 space-y-4">
               {#if step === "inputAuthCode"}
