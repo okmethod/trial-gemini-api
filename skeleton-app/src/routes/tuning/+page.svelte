@@ -2,8 +2,11 @@
   import { getToastStore, getModalStore } from "@skeletonlabs/skeleton";
   import type { ToastSettings, ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
+  import type { TunedModel } from "$lib/types/model";
+  import getTunedModels from "$lib/api/getTunedModels.client";
   import { fetchText } from "$lib/utils/generativeLanguage";
   import { checkToken } from "$lib/utils/auth";
+  import { formatDateToJST } from "$lib/utils/format";
   import AuthModal from "$lib/components/AuthModal.svelte";
   import type { PokeData } from "./+page";
 
@@ -55,6 +58,11 @@
     toastStore.trigger(t);
   }
 
+  let tunedModels: TunedModel[] = [];
+  async function updateModels() {
+    tunedModels = await getTunedModels(window.fetch);
+  }
+
   // 画像解釈
   async function explainImages() {
     console.log("Ready to export");
@@ -97,12 +105,7 @@
             </form>
           </div>
           <div class="cInputFormAndMessagePartStyle">
-            <input
-              type="password"
-              id="accessToken"
-              bind:value={accessToken}
-              class="border rounded px-4 py-1 w-full h-full"
-            />
+            <input type="password" id="accessToken" bind:value={accessToken} class="border rounded px-4 py-1 h-full" />
             <form on:submit|preventDefault={copyToClipboard}>
               <button
                 type="submit"
@@ -117,6 +120,49 @@
           </div>
         </div>
       </div>
+
+      <div class="flex flex-col md:flex-row space-x-3">
+        <div>
+          <div class="cInputFormAndMessagePartStyle">
+            <span>チューニング済みモデル一覧</span>
+            <form on:submit|preventDefault={updateModels}>
+              <button
+                type="submit"
+                disabled={isProcessing}
+                class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
+              >
+                <div class="cIconDivStyle">
+                  <Icon icon="mdi:table-refresh" class="cIconStyle" />
+                </div>
+              </button>
+            </form>
+          </div>
+          <div class="table-container">
+            <!-- Native Table Element -->
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>name</th>
+                  <th>displayName</th>
+                  <th>date</th>
+                  <th>state</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each tunedModels as model}
+                  <tr>
+                    <td>{model.name}</td>
+                    <td>{model.displayName}</td>
+                    <td>{formatDateToJST(model.updateTime)}</td>
+                    <td>{model.state}</td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div class="flex flex-col md:flex-row space-x-3">
         <div>
           <div class="cInputFormAndMessagePartStyle">
@@ -127,7 +173,7 @@
               type="text"
               id="exportFileName"
               bind:value={exportFileName}
-              class="border rounded px-4 py-1 w-full h-full"
+              class="border rounded px-4 py-1 h-full"
             />
             <form on:submit|preventDefault={explainImages}>
               <button
