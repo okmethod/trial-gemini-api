@@ -19,8 +19,8 @@ const TUNED_MODELS: TunedModel[] = [
   {
     name: "tunedModels/v11-7jwr4cv5rdj5",
     displayName: "ポケモン学習v1.1",
-    updateTime: "2024-08-27T13:55:16.325644Z",
-    state: "CREATING",
+    updateTime: "2024-08-27T19:00:30.408418Z",
+    state: "ACTIVE",
   },
 ];
 
