@@ -41,7 +41,12 @@ const chatReply = async (req: Request, res: Response) => {
     startChatParams,
     userInput,
   } = requestBody;
-  if ( !modelParams || !requestOptions || !startChatParams || !userInput ) {
+  if (
+    !modelParams ||
+    (requestOptions !== undefined && !("customHeaders" in requestOptions)) ||
+    !startChatParams ||
+    !userInput
+  ) {
     res.status(400).json({
       error: "Missing required parameters",
       details: requestBody,
