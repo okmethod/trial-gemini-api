@@ -13,5 +13,7 @@
 			"path": "functions"
 		},
 	],
-	"settings": {}
+	"settings": {
+		"makefile.configureOnOpen": false
+	}
 }
