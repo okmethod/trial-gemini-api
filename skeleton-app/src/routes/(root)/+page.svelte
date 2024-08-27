@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount, onDestroy } from "svelte";
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
@@ -23,8 +24,10 @@
   let aiOutput = initialGuide;
   let turnCounter = 0;
   let gameStatus: GameStatus = "init";
+  let isProcessing = false;
   async function sendMessage() {
     if (userInput.trim() === "") return;
+    isProcessing = true;
     chatHistory = [...chatHistory, { role: "user", parts: userInput }];
 
     let reply: string | null;
@@ -40,6 +43,7 @@
     turnCounter += 1;
     gameStatus = decideGameStatus(turnCounter);
     console.debug("turn:", turnCounter);
+    isProcessing = false;
   }
 
   type GameStatus = "init" | "onGame" | "giveUp" | "gameOver" | "unknown";
@@ -72,6 +76,30 @@
     userInput = initialPrompt;
     sendMessage();
   }
+
+  const fullText = "......??????";
+  let index = 0;
+  let processingMessage = fullText[index];
+  let interval: ReturnType<typeof setInterval>;
+  function updateProcessingMessage() {
+    if (isProcessing) {
+      if (index < fullText.length) {
+        processingMessage += fullText[index];
+        index++;
+      } else {
+        clearInterval(interval);
+      }
+    } else {
+      index = 0;
+      processingMessage = fullText[index];
+    }
+  }
+  onMount(() => {
+    interval = setInterval(updateProcessingMessage, 500);
+  });
+  onDestroy(() => {
+    clearInterval(interval);
+  });
 
   // モーダル表示
   const modalStore = getModalStore();
@@ -180,7 +208,11 @@
           "
         />
         <div class="w-72 h-full p-4 bg-gray-100 rounded-xl">
-          <span>{@html `${aiOutput}`} </span>
+          {#if isProcessing}
+            <span>{processingMessage}</span>
+          {:else}
+            <span>{@html `${aiOutput}`} </span>
+          {/if}
         </div>
       </div>
     </div>
