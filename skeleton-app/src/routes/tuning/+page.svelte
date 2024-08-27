@@ -3,7 +3,7 @@
   import type { ToastSettings, ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import type { TunedModel } from "$lib/types/model";
-  import getTunedModels from "$lib/api/getTunedModels.client";
+  import getTunedModels from "$lib/api/genlang/getTunedModels.client";
   import { fetchText } from "$lib/utils/generativeLanguage";
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
