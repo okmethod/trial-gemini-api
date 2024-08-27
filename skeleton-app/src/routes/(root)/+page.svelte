@@ -27,20 +27,20 @@
     if (userInput.trim() === "") return;
     isProcessing = true;
     chatHistory = [...chatHistory, { role: "user", parts: userInput }];
+    turnCounter += 1;
+    console.debug("turn:", turnCounter);
+    gameStatus = decideGameStatus(turnCounter);
 
     let reply: string | null;
     reply = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
+    userInput = "";
     if (!reply) {
       reply = FailedAiOutput;
       turnCounter += 99;
     }
     chatHistory = [...chatHistory, { role: "model", parts: reply }];
 
-    userInput = "";
     aiOutput = await transMarkdownToSanitizedHtml(reply);
-    turnCounter += 1;
-    gameStatus = decideGameStatus(turnCounter);
-    console.debug("turn:", turnCounter);
     isProcessing = false;
   }
 
@@ -204,7 +204,7 @@
     <div class="flex items-center justify-center space-x-2">
       {#if gameStatus === "init"}
         <form on:submit|preventDefault={startGame}>
-          <button type="submit" class="cIconButtonStyle">
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
             <div class={cButtonSpan}>
               <span> はじめる </span>
             </div>
@@ -217,7 +217,7 @@
             sendMessage();
           }}
         >
-          <button type="submit" class="cIconButtonStyle">
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
             <div class={cButtonSpan}>
               <span> はい </span>
             </div>
@@ -229,7 +229,7 @@
             sendMessage();
           }}
         >
-          <button type="submit" class="cIconButtonStyle">
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
             <div class={cButtonSpan}>
               <span> いいえ </span>
             </div>
@@ -244,7 +244,7 @@
         </button>
       {:else if gameStatus === "gameOver"}
         <form on:submit|preventDefault={startGame}>
-          <button type="submit" class="cIconButtonStyle">
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
             <div class={cButtonSpan}>
               <span> もう一度 </span>
             </div>
@@ -252,7 +252,7 @@
         </form>
       {:else}
         <form on:submit|preventDefault={resetGame}>
-          <button type="submit" class="cIconButtonStyle">
+          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
             <div class={cButtonSpan}>
               <span> リセット </span>
             </div>
