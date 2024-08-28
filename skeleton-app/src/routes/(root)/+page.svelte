@@ -18,29 +18,29 @@
   const FailedAiOutput = "今日はもう、つかれちゃったよ...";
 
   let chatHistory: Chat[] = [];
-  let userInput = "";
-  let aiOutput = initialGuide;
+  let currentUserInput = "";
+  let currentAiOutput = initialGuide;
   let turnCounter = 0;
   let gameStatus: GameStatus = "init";
   let isProcessing = false;
   async function sendMessage() {
-    if (userInput.trim() === "") return;
+    if (currentUserInput.trim() === "") return;
     isProcessing = true;
-    chatHistory = [...chatHistory, { role: "user", parts: userInput }];
+    const userInput = currentUserInput;
+    currentUserInput = "";
     turnCounter += 1;
     console.debug("turn:", turnCounter);
     gameStatus = decideGameStatus(turnCounter);
 
-    let reply: string | null;
-    reply = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
-    userInput = "";
-    if (!reply) {
-      reply = FailedAiOutput;
+    let aiOutput: string | null;
+    aiOutput = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
+    if (!aiOutput) {
+      aiOutput = FailedAiOutput;
       turnCounter += 99;
     }
-    chatHistory = [...chatHistory, { role: "model", parts: reply }];
+    chatHistory = [...chatHistory, { role: "user", parts: userInput }, { role: "model", parts: aiOutput }];
 
-    aiOutput = await transMarkdownToSanitizedHtml(reply);
+    currentAiOutput = await transMarkdownToSanitizedHtml(aiOutput);
     isProcessing = false;
   }
 
@@ -65,13 +65,13 @@
     chatHistory = [];
     turnCounter = 0;
     gameStatus = decideGameStatus(turnCounter);
-    userInput = "";
-    aiOutput = initialGuide;
+    currentUserInput = "";
+    currentAiOutput = initialGuide;
   }
 
   function startGame() {
     resetGame();
-    userInput = initialPrompt;
+    currentUserInput = initialPrompt;
     sendMessage();
   }
 
@@ -194,7 +194,7 @@
           {#if isProcessing}
             <span>{processingMessage}</span>
           {:else}
-            <span>{@html `${aiOutput}`} </span>
+            <span>{@html `${currentAiOutput}`} </span>
           {/if}
         </div>
       </div>
@@ -213,7 +213,7 @@
       {:else if gameStatus === "onGame"}
         <form
           on:submit|preventDefault={() => {
-            userInput = "はい";
+            currentUserInput = "はい";
             sendMessage();
           }}
         >
@@ -225,7 +225,7 @@
         </form>
         <form
           on:submit|preventDefault={() => {
-            userInput = "いいえ";
+            currentUserInput = "いいえ";
             sendMessage();
           }}
         >
@@ -236,7 +236,7 @@
           </button>
         </form>
       {:else if gameStatus === "giveUp"}
-        <input id="message" type="text" class="rounded" bind:value={userInput} placeholder="ポケモンの名前" />
+        <input id="message" type="text" class="rounded" bind:value={currentUserInput} placeholder="ポケモンの名前" />
         <button on:click={sendMessage} class="cIconButtonStyle">
           <div class={cButtonSpan}>
             <span> こたえる </span>
