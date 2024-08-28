@@ -8,10 +8,11 @@
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";
-  import { initialPrompt, initialGuide } from "./initialPrompt";
 
   export let data: {
     hogeTorusImageUrl: string;
+    initialPrompt: string;
+    initialGuide: string;
   };
 
   let currentModelName: string | null = null;
@@ -19,7 +20,7 @@
 
   let chatHistory: Chat[] = [];
   let currentUserInput = "";
-  let currentAiOutput = initialGuide;
+  let currentAiOutput = data.initialGuide;
   let turnCounter = 0;
   let gameStatus: GameStatus = "init";
   let isProcessing = false;
@@ -66,12 +67,12 @@
     turnCounter = 0;
     gameStatus = decideGameStatus(turnCounter);
     currentUserInput = "";
-    currentAiOutput = initialGuide;
+    currentAiOutput = data.initialGuide;
   }
 
   function startGame() {
     resetGame();
-    currentUserInput = initialPrompt;
+    currentUserInput = data.initialPrompt;
     sendMessage();
   }
 
