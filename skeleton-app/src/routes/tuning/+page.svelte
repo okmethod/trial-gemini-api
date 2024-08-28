@@ -16,7 +16,15 @@
     trainingPokeDict: Record<number, PokePrompt>;
   };
 
-  // 認証モーダル表示
+  const toastStore = getToastStore();
+  function toastSettings(message: string): ToastSettings {
+    return {
+      message: message,
+      background: "bg-green-100 select-none",
+      timeout: 2000,
+    };
+  }
+
   const modalStore = getModalStore();
   function modalSettings(modalComponent: ModalComponent): ModalSettings {
     return {
@@ -25,6 +33,8 @@
       backdropClasses: "fixed inset-0 !bg-gray-300/90",
     };
   }
+
+  // 認証モーダル表示
   let accessToken: string | null = null;
   accessToken = checkToken();
   function showAuthModal(): void {
@@ -43,28 +53,36 @@
 
   function copyToClipboard() {
     navigator.clipboard.writeText(accessToken || "");
-    showHintToast();
-  }
+    _showHintToast();
 
-  // トースト表示
-  const toastStore = getToastStore();
-  function toastSettings(message: string): ToastSettings {
-    return {
-      message: message,
-      background: "bg-green-100 select-none",
-      timeout: 2000,
-    };
-  }
-  function showHintToast(): void {
-    const t = toastSettings("Copied!");
-    toastStore.trigger(t);
+    function _showHintToast(): void {
+      const t = toastSettings("Copied!");
+      toastStore.trigger(t);
+    }
   }
 
   // モデル一覧取得
   let tunedModels: TunedModel[] = [];
   async function updateModels() {
     tunedModels = await getTunedModels(window.fetch);
+    _updateModelTableToast(tunedModels.length);
+
+    function _updateModelTableToast(count: number): void {
+      const t = toastSettings(`Updated: ${count} models`);
+      toastStore.trigger(t);
+    }
   }
+
+  async function updatePermissions(modelName: string) {
+    const permissons = await postTunedModelsPermissions(window.fetch, modelName);
+    _updatePermissionsToast(permissons.length);
+
+    function _updatePermissionsToast(count: number): void {
+      const t = toastSettings(count > 0 ? "Permissions Updated." : "No permissions updated.");
+      toastStore.trigger(t);
+    }
+  }
+
   let tunedModelsJsonFileName = "tunedModels.json";
   async function downloadTunedModelsJson() {
     const filteredModels = tunedModels.map((model) => ({
@@ -118,8 +136,15 @@
             </form>
           </div>
           <div class="cInputFormAndMessagePartStyle">
-            <input type="password" id="accessToken" bind:value={accessToken} class="border rounded px-4 py-1 h-full" />
             <form on:submit|preventDefault={copyToClipboard}>
+              <input type="text" autocomplete="username" id="dummy" class="hidden" aria-hidden="true" />
+              <input
+                type="password"
+                autocomplete="new-password"
+                id="accessToken"
+                bind:value={accessToken}
+                class="border rounded px-4 py-1 h-full"
+              />
               <button
                 type="submit"
                 disabled={isProcessing}
@@ -171,7 +196,7 @@
                     <td>{model.state}</td>
                     <td>
                       <button>
-                        <form on:submit|preventDefault={() => postTunedModelsPermissions(window.fetch, model.name)}>
+                        <form on:submit|preventDefault={() => updatePermissions(model.name)}>
                           <button
                             type="submit"
                             disabled={isProcessing}
