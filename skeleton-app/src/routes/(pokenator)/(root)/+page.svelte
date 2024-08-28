@@ -4,7 +4,7 @@
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import type { Chat } from "$lib/types/chat";
-  import { fetchChatReply } from "$lib/utils/generativeLanguage";
+  import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import SelectModelModal from "$lib/components/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/ChatLogModal.svelte";

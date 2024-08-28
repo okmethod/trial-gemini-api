@@ -5,7 +5,7 @@
   import type { TunedModel } from "$lib/types/model";
   import getTunedModels from "$lib/api/genlang/getTunedModels.client";
   import postTunedModelsPermissions from "$lib/api/genlang/postTunedModelsPermissions.client";
-  import { fetchText } from "$lib/utils/generativeLanguage";
+  import { fetchText } from "$lib/genlang/generateContent";
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
   import { downloadFile } from "$lib/utils/download.client";
