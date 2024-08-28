@@ -10,10 +10,10 @@
   import { formatDateToJST } from "$lib/utils/format";
   import { downloadFile } from "$lib/utils/download.client";
   import AuthModal from "$lib/components/AuthModal.svelte";
-  import type { PokeData } from "./+page";
+  import type { PokePrompt } from "$lib/constants/poke";
 
   export let data: {
-    trainingPokeDict: Record<number, PokeData>;
+    trainingPokeDict: Record<number, PokePrompt>;
   };
 
   // 認証モーダル表示
