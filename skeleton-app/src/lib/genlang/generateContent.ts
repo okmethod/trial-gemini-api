@@ -1,4 +1,4 @@
-import type { InlineDataPart, GenerateContentResult } from "@google/generative-ai";
+import type { Part, GenerateContentResult } from "@google/generative-ai";
 import { apiKey, generativeModel } from "$lib/genlang/init";
 import { checkToken } from "$lib/utils/auth";
 
@@ -6,7 +6,7 @@ async function generateContentLocal(
   apiKey: string,
   modelName: string | null,
   token: string | null,
-  request: string | Array<string | InlineDataPart>,
+  request: string | Array<string | Part>,
 ): Promise<GenerateContentResult> {
   const model = generativeModel(apiKey, modelName, token);
   const response = await model.generateContent(request);
@@ -16,7 +16,7 @@ async function generateContentLocal(
 export async function fetchText(
   // fetchFunction: typeof fetch,
   modelName: string | null,
-  request: string | Array<string | InlineDataPart>,
+  request: string | Array<string | Part>,
 ): Promise<string | null> {
   const token = checkToken();
 

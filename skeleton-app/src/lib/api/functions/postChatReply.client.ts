@@ -1,10 +1,10 @@
-import type { ModelParams, RequestOptions, StartChatParams, GenerateContentResult } from "@google/generative-ai";
+import type { ModelParams, RequestOptions, StartChatParams, Part, GenerateContentResult } from "@google/generative-ai";
 
 interface RequestBody {
   modelParams: ModelParams;
   requestOptions: RequestOptions | undefined;
   startChatParams: StartChatParams;
-  userInput: string;
+  userInput: Array<string | Part>;
 }
 
 async function postChatReply(
@@ -12,7 +12,7 @@ async function postChatReply(
   modelParams: ModelParams,
   requestOptions: RequestOptions | undefined,
   startChatParams: StartChatParams,
-  userInput: string,
+  userInput: Array<string | Part>,
 ): Promise<GenerateContentResult> {
   const apiUrl = "/api/chat-reply";
   const requestBody: RequestBody = { modelParams, requestOptions, startChatParams, userInput };

@@ -1,4 +1,4 @@
-import type { StartChatParams, GenerateContentResult } from "@google/generative-ai";
+import type { StartChatParams, Part, GenerateContentResult } from "@google/generative-ai";
 import type { Chat } from "$lib/types/chat";
 import postChatReply from "$lib/api/functions/postChatReply.client";
 import { apiKey, generativeModel, requestOptions } from "$lib/genlang/init";
@@ -10,7 +10,7 @@ async function generateChatContentLocal(
   modelName: string | null,
   token: string | null,
   chatParam: StartChatParams,
-  userInput: string,
+  userInput: Array<string | Part>,
 ): Promise<GenerateContentResult> {
   const model = generativeModel(apiKey, modelName, token);
   const chat = model.startChat(chatParam);
@@ -22,12 +22,12 @@ export async function fetchChatReply(
   fetchFunction: typeof fetch,
   modelName: string | null,
   chatHistory: Chat[],
-  userInput: string,
+  userInput: Array<string | Part>,
 ): Promise<string | null> {
   const chatParam: StartChatParams = {
     history: chatHistory.map((chat) => ({
       role: chat.role,
-      parts: [{ text: chat.parts }],
+      parts: chat.parts.map((part) => (typeof part === "string" ? { text: part } : part)) as Part[],
     })),
   };
 

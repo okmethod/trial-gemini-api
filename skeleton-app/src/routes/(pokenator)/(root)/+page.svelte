@@ -3,6 +3,7 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
+  import type { Part } from "@google/generative-ai";
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
@@ -34,12 +35,12 @@
     gameStatus = decideGameStatus(turnCounter);
 
     let aiOutput: string | null;
-    aiOutput = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
+    aiOutput = await fetchChatReply(window.fetch, currentModelName, chatHistory, [userInput]);
     if (!aiOutput) {
       aiOutput = FailedAiOutput;
       turnCounter += 99;
     }
-    chatHistory = [...chatHistory, { role: "user", parts: userInput }, { role: "model", parts: aiOutput }];
+    chatHistory = [...chatHistory, { role: "user", parts: [userInput] }, { role: "model", parts: [aiOutput] }];
 
     currentAiOutput = await transMarkdownToSanitizedHtml(aiOutput);
     isProcessing = false;

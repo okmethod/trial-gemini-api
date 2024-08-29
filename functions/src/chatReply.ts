@@ -7,6 +7,7 @@ import type {
   ModelParams,
   RequestOptions,
   StartChatParams,
+  Part,
   GenerateContentResult,
 } from "@google/generative-ai";
 
@@ -14,7 +15,7 @@ interface RequestBody {
   modelParams: ModelParams;
   requestOptions: RequestOptions | undefined;
   startChatParams: StartChatParams;
-  userInput: string;
+  userInput: Array<string | Part>;
 }
 
 const chatReply = async (req: Request, res: Response) => {
