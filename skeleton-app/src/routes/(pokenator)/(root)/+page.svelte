@@ -3,7 +3,6 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
-  import type { Part } from "@google/generative-ai";
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
@@ -154,28 +153,22 @@
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
     <div class="flex items-center justify-between space-x-2 ml-8 mr-8">
-      <form on:submit|preventDefault={showSelectModelModal}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:brain" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
+      <button type="submit" on:click={showSelectModelModal} class="cIconButtonStyle">
+        <div class="cIconDivStyle">
+          <Icon icon="mdi:brain" class="cIconStyle" />
+        </div>
+      </button>
       <div class="flex-grow"><!--spacer--></div>
-      <form on:submit|preventDefault={resetGame}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:restart" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
-      <form on:submit|preventDefault={showChatLogModal}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:forum-outline" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
+      <button type="submit" on:click={resetGame} class="cIconButtonStyle">
+        <div class="cIconDivStyle">
+          <Icon icon="mdi:restart" class="cIconStyle" />
+        </div>
+      </button>
+      <button type="submit" on:click={showChatLogModal} class="cIconButtonStyle">
+        <div class="cIconDivStyle">
+          <Icon icon="mdi:forum-outline" class="cIconStyle" />
+        </div>
+      </button>
     </div>
 
     <!-- Pokenator 表示 -->
@@ -205,61 +198,57 @@
     <!-- 下部ボタン -->
     <div class="flex items-center justify-center space-x-2">
       {#if gameStatus === "init"}
-        <form on:submit|preventDefault={startGame}>
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class={cButtonSpan}>
-              <span> はじめる </span>
-            </div>
-          </button>
-        </form>
+        <button type="submit" on:click={startGame} class="cIconButtonStyle">
+          <div class="cButtonSpan">
+            <span> はじめる </span>
+          </div>
+        </button>
       {:else if gameStatus === "onGame"}
-        <form
-          on:submit|preventDefault={() => {
+        <button
+          type="submit"
+          on:click={() => {
             currentUserInput = "はい";
             sendMessage();
           }}
+          disabled={isProcessing}
+          class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
         >
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class={cButtonSpan}>
-              <span> はい </span>
-            </div>
-          </button>
-        </form>
-        <form
-          on:submit|preventDefault={() => {
+          <div class="cButtonSpan">
+            <span> はい </span>
+          </div>
+        </button>
+        <button
+          type="submit"
+          on:click={() => {
             currentUserInput = "いいえ";
             sendMessage();
           }}
+          disabled={isProcessing}
+          class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
         >
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class={cButtonSpan}>
-              <span> いいえ </span>
-            </div>
-          </button>
-        </form>
+          <div class="cButtonSpan">
+            <span> いいえ </span>
+          </div>
+        </button>
       {:else if gameStatus === "giveUp"}
         <input id="message" type="text" class="rounded" bind:value={currentUserInput} placeholder="ポケモンの名前" />
         <button on:click={sendMessage} class="cIconButtonStyle">
-          <div class={cButtonSpan}>
+          <div class="cButtonSpan">
             <span> こたえる </span>
           </div>
         </button>
       {:else if gameStatus === "gameOver"}
-        <form on:submit|preventDefault={startGame}>
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class={cButtonSpan}>
-              <span> もう一度 </span>
-            </div>
-          </button>
-        </form>
+        <button type="submit" on:click={startGame} class="cIconButtonStyle">
+          <div class="cButtonSpan">
+            <span> もう一度 </span>
+          </div>
+        </button>
       {:else}
-        <form on:submit|preventDefault={resetGame}>
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class={cButtonSpan}>
-              <span> リセット </span>
-            </div>
-          </button>
-        </form>
+        <button type="submit" on:click={resetGame} class="cIconButtonStyle">
+          <div class="cButtonSpan">
+            <span> リセット </span>
+          </div>
+        </button>
       {/if}
     </div>
   </div>
