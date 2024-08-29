@@ -5,9 +5,9 @@ const promptTemplate = (pokeName: string) =>
   `これは ${pokeName} の画像です。この画像から外見的な特徴を抽出してください`;
 
 export async function load({ fetch }: LoadEvent): Promise<{
-  trainingPokeDict: Record<number, PokePrompt>;
+  trainingPokePrompts: Record<number, PokePrompt>;
 }> {
-  const trainingPokeDict = await createPokePrompt(fetch, pokeDict, promptTemplate);
+  const trainingPokePrompts = await createPokePrompt(fetch, pokeDict, promptTemplate);
 
-  return { trainingPokeDict };
+  return { trainingPokePrompts };
 }

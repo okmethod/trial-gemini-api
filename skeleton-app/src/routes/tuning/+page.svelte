@@ -13,7 +13,7 @@
   import type { PokePrompt } from "$lib/constants/poke";
 
   export let data: {
-    trainingPokeDict: Record<number, PokePrompt>;
+    trainingPokePrompts: Record<number, PokePrompt>;
   };
 
   const toastStore = getToastStore();
@@ -98,8 +98,8 @@
   async function explainImages() {
     console.log("Ready to export");
 
-    for (const key in data.trainingPokeDict) {
-      const pokeData = data.trainingPokeDict[key];
+    for (const key in data.trainingPokePrompts) {
+      const pokeData = data.trainingPokePrompts[key];
       const generatedtext = await fetchText(null, [pokeData.prompt, pokeData.imagePart]);
       console.log(`Generated content for ${pokeData.name}:`, generatedtext);
     }
