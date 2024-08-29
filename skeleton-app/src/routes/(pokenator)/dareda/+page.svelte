@@ -66,6 +66,7 @@
   }
 
   function resetGame() {
+    isOpen = false;
     chatHistory = [];
     turnCounter = 0;
     gameStatus = decideGameStatus(turnCounter);
@@ -104,6 +105,11 @@
   onDestroy(() => {
     clearInterval(interval);
   });
+
+  let isOpen = false;
+  function openImage() {
+    isOpen = true;
+  }
 
   // モーダル表示
   const modalStore = getModalStore();
@@ -186,7 +192,11 @@
     <div class="m-4">
       <div class="flex flex-col items-center justify-center">
         <div class="w-24 h-24 mb-1">
-          <img src={currentPokeData?.imageUrl} alt="Pokenator" class="w-full h-full object-contain" />
+          {#if isOpen}
+            <img src={currentPokeData?.imageUrl} alt="Pokenator" class="w-full h-full object-contain" />
+          {:else}
+            <Icon icon="mdi:help" class="cIconStyle" />
+          {/if}
         </div>
         <div
           class="
@@ -227,7 +237,7 @@
             </button>
           </div>
           <div class="flex items-center justify-center">
-            <button on:click={sendMessage} class="cIconButtonStyle">
+            <button on:click={openImage} class="cIconButtonStyle">
               <div class="cButtonSpan">
                 <span> こたえをみる </span>
               </div>
