@@ -21,3 +21,9 @@ export function pickRandomElementsFromArray<T>(array: T[], count: number): T[] {
   const pickedIndices = pickRandomNumbers(allIndices, count);
   return pickedIndices.map((index) => array[index]);
 }
+
+export function pickRandomElementsFromObject<T>(obj: Record<string, T>, count: number): T[] {
+  const keys = Object.keys(obj);
+  const pickedKeys = pickRandomElementsFromArray(keys, count);
+  return pickedKeys.map((key) => obj[key]);
+}
