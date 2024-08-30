@@ -29,7 +29,7 @@
                 {#each chatHistory.slice(1) as chat}
                   <div class={chat.role === "user" ? cUserMessage : cAiMessage}>
                     <strong>{chat.role === "user" ? "You" : "AI"}:</strong>
-                    <span>{chat.parts.replace(/\*/g, "")}</span>
+                    <span>{chat.parts.join("").replace(/\*/g, "")}</span>
                   </div>
                 {/each}
               {:else}
