@@ -12,7 +12,7 @@ export interface PokePrompt extends PokeData {
   prompt: string;
 }
 
-const imageUrlTemplate = (id: number) =>
+export const imageUrlTemplate = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
 const imageOggTemplate = (id: number) =>
