@@ -147,9 +147,6 @@
     modalStore.trigger(m);
   }
 
-  // スタイル
-  const cButtonSpan = "w-16 h-5 flex items-center justify-center";
-
   /* eslint-disable svelte/no-at-html-tags */
   /* {@html}ディレクティブ を使う前は必ずサニタイズすること！ */
 </script>
@@ -238,7 +235,7 @@
           </div>
           <div class="flex items-center justify-center">
             <button on:click={openImage} class="cIconButtonStyle">
-              <div class="cButtonSpan">
+              <div class="cButtonSpan !w-32">
                 <span> こたえをみる </span>
               </div>
             </button>

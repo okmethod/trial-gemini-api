@@ -136,9 +136,6 @@
     modalStore.trigger(m);
   }
 
-  // スタイル
-  const cButtonSpan = "w-16 h-5 flex items-center justify-center";
-
   /* eslint-disable svelte/no-at-html-tags */
   /* {@html}ディレクティブ を使う前は必ずサニタイズすること！ */
 </script>
