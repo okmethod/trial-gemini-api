@@ -4,6 +4,7 @@
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import type { Part } from "@google/generative-ai";
+  import { playAudio } from "$lib/stores/audio";
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
@@ -50,6 +51,7 @@
     chatHistory = [...chatHistory, { role: "user", parts: userInput }, { role: "model", parts: [aiOutput] }];
 
     currentAiOutput = await transMarkdownToSanitizedHtml(aiOutput);
+    playAudio(currentPokeData.oggUrl);
     isProcessing = false;
   }
 
@@ -109,6 +111,7 @@
   let isOpen = false;
   function openImage() {
     isOpen = true;
+    playAudio(currentPokeData.oggUrl);
   }
 
   // モーダル表示
