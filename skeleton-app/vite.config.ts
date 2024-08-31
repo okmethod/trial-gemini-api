@@ -49,6 +49,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ["@ffmpeg/ffmpeg"],
+  },
   server: {
     proxy: {
       "/api": {
