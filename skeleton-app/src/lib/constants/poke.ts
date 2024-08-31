@@ -15,7 +15,7 @@ export interface PokePrompt extends PokeData {
 export const imageUrlTemplate = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 
-const imageOggTemplate = (id: number) =>
+const oggUrlTemplate = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
 
 export async function createPokePrompt(
@@ -32,7 +32,7 @@ export async function createPokePrompt(
             ...pokeData,
             imageUrl: imageUrlTemplate(Number(id)),
             imagePart: await urlToGenerativePart(fetchFunction, imageUrlTemplate(Number(id)), "image/png"),
-            oggUrl: imageOggTemplate(Number(id)),
+            oggUrl: oggUrlTemplate(Number(id)),
             prompt: promptTemplate(pokeData.name),
           },
         ]),
