@@ -12,32 +12,36 @@ audioOn.subscribe((value: boolean) => {
   }
 });
 
+let latestUrl: string | null = null;
 let audioContext: AudioContext | null = null;
 let audioBuffer: AudioBuffer | null = null;
-let audioCache: string | null = null;
-
-async function loadAudio(oggUrl: string): Promise<void> {
-  if (audioCache === oggUrl) return;
-  audioCache = oggUrl;
-  const audioUrl = await availableAudioUrl(oggUrl);
-  const response = await fetch(audioUrl);
-  const arrayBuffer = await response.arrayBuffer();
-
-  audioContext = new AudioContext();
-  try {
-    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-  } catch (error) {
-    console.error("Error decoding audio data:", error);
+let audioSource: AudioBufferSourceNode;
+export async function initAudio(oggUrl: string): Promise<() => void> {
+  if (latestUrl !== oggUrl) {
+    try {
+      const audioUrl = await availableAudioUrl(oggUrl);
+      const response = await fetch(audioUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      audioContext = new AudioContext();
+      audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      latestUrl = oggUrl;
+    } catch (error) {
+      console.error("Error decoding audio data:", error);
+    }
   }
+  prepareAudioSource();
+  return playAudio;
 }
 
-export async function playAudio(oggUrl: string | null) {
-  if (!browser || !get(audioOn) || !oggUrl) return;
-  await loadAudio(oggUrl);
-  if (audioBuffer && audioContext) {
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start(0);
-  }
+function prepareAudioSource() {
+  if (!audioBuffer || !audioContext) return;
+  audioSource = audioContext.createBufferSource();
+  audioSource.buffer = audioBuffer;
+  audioSource.connect(audioContext.destination);
+}
+
+async function playAudio() {
+  if (!browser || !get(audioOn) || !audioSource) return;
+  audioSource.start(0);
+  prepareAudioSource();
 }

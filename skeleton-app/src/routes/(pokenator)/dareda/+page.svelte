@@ -4,7 +4,7 @@
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import Icon from "@iconify/svelte";
   import type { Part } from "@google/generative-ai";
-  import { playAudio } from "$lib/stores/audio";
+  import { initAudio } from "$lib/stores/audio";
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
@@ -51,7 +51,7 @@
     chatHistory = [...chatHistory, { role: "user", parts: userInput }, { role: "model", parts: [aiOutput] }];
 
     currentAiOutput = await transMarkdownToSanitizedHtml(aiOutput);
-    playAudio(currentPokeData.oggUrl);
+    playAudio();
     isProcessing = false;
   }
 
@@ -77,10 +77,12 @@
   }
 
   let currentPokeData: PokePrompt;
-  function startGame() {
+  let playAudio: () => void;
+  async function startGame() {
     resetGame();
     currentUserInput = null;
     currentPokeData = pickRandomElementsFromObject(data.pokePrompts, 1)[0];
+    playAudio = await initAudio(currentPokeData.oggUrl);
     sendMessage();
   }
 
@@ -109,9 +111,10 @@
   });
 
   let isOpen = false;
-  function openImage() {
+  async function openImage() {
     isOpen = true;
-    playAudio(currentPokeData.oggUrl);
+    const playAudio = await initAudio(currentPokeData.oggUrl);
+    playAudio();
   }
 
   // モーダル表示
