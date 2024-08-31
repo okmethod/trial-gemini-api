@@ -14,8 +14,11 @@ audioOn.subscribe((value: boolean) => {
 
 let audioContext: AudioContext | null = null;
 let audioBuffer: AudioBuffer | null = null;
+let audioCache: string | null = null;
 
 async function loadAudio(oggUrl: string): Promise<void> {
+  if (audioCache === oggUrl) return;
+  audioCache = oggUrl;
   const audioUrl = await availableAudioUrl(oggUrl);
   const response = await fetch(audioUrl);
   const arrayBuffer = await response.arrayBuffer();
