@@ -1,6 +1,7 @@
 # trial-gemini-api
 
-`gh-pages` ブランチの静的アセットを Github Pages で公開する。
+Firebase Hosting で SPA を公開する。  
+APIキーなどのクレデンシャル情報を使う処理は、Firebase Functions で動かす。
 
 ## ローカルでの起動方法
 
