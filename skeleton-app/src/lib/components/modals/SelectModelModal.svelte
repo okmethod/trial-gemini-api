@@ -24,7 +24,7 @@
 {#if $modalStore[0]}
   <div class="" data-parent={parent}>
     <div class="relative min-w-80">
-      <div class="h-full h-full bg-white rounded-lg">
+      <div class="h-full h-full bg-surface-900 rounded-lg">
         <div class="p-4 flex flex-col h-full">
           <h2 class="text-xl font-bold mb-2">モデル選択</h2>
           <div class="mt-4 space-y-2">
@@ -41,7 +41,7 @@
                 <span
                   class="
                     flex flex-col w-full mx-auto text-center border rounded-lg
-                    peer-checked:bg-blue-200"
+                    peer-checked:bg-surface-600"
                 >
                   {model.displayName}
                 </span>

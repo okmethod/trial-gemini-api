@@ -20,11 +20,11 @@
 {#if $modalStore[0]}
   <div class="" data-parent={parent}>
     <div class="relative min-w-80">
-      <div class="h-full h-full bg-white rounded-lg">
+      <div class="h-full h-full bg-surface-900 rounded-lg">
         <div class="p-4 flex flex-col h-full">
           <h2 class="text-xl font-bold mb-2">チャットログ</h2>
           <div class="overflow-y-auto flex-grow">
-            <div class="text-sm text-gray-500 space-y-1">
+            <div class="text-sm space-y-1">
               {#if chatHistory.length > 0}
                 {#each chatHistory.slice(1) as chat}
                   <div class={chat.role === "user" ? cUserMessage : cAiMessage}>
