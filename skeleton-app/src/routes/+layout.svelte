@@ -52,7 +52,7 @@
     setAudioOn(currentAudioOn);
   }
 
-  const cHeaderButtonStyle = "variant-filled border border-primary-600";
+  const cHeaderButtonStyle = "variant-filled bg-white text-gray-800 border border-primary-600";
 </script>
 
 <svelte:head>
@@ -64,7 +64,7 @@
 
 {#if isLoaded}
   <div class="h-screen flex flex-col">
-    <div class="relative border-b border-gray-400 bg-primary-300 p-1">
+    <div class="relative border-b border-primary-400 bg-primary-300 p-1">
       <div class="h-full flex items-center justify-between space-x-2">
         <IconButton
           icon="mdi:home-outline"
