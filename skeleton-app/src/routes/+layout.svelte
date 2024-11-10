@@ -5,7 +5,7 @@
   import { Toast, Modal, initializeStores, storePopup } from "@skeletonlabs/skeleton";
   import { computePosition, autoUpdate, flip, shift, offset, arrow } from "@floating-ui/dom";
   import Icon from "@iconify/svelte";
-  import { audioOn } from "$lib/stores/audio";
+  import { getAudioOn, setAudioOn } from "$lib/stores/audio";
   import { generations, generationId, type GenerationId } from "$lib/stores/generation";
   import { pickRandomNumbers } from "$lib/utils/collections";
   import { loadFFmpeg } from "$lib/utils/convertOggToMp3.client";
@@ -27,7 +27,7 @@
   let currentGenerationId: GenerationId | null = null;
   let currentGenerationImageUrl: string | null = null;
   onMount(async () => {
-    currentAudioOn = get(audioOn);
+    currentAudioOn = getAudioOn();
     currentGenerationId = get(generationId);
     currentGenerationImageUrl = getSymbolImageUrl(currentGenerationId);
     options = options.filter((option) => option.value !== "");
@@ -43,7 +43,7 @@
 
   function toggleAudioOn() {
     currentAudioOn = !currentAudioOn;
-    audioOn.set(currentAudioOn);
+    setAudioOn(currentAudioOn);
   }
 </script>
 
@@ -68,7 +68,7 @@
       </a>
       <div class="w-8 h-8 bg-white border border-gray-400 rounded-full ml-1">
         <button on:click={toggleAudioOn} class="w-full h-full flex items-center justify-center">
-          <Icon icon={$audioOn ? "mdi:volume-high" : "mdi:volume-off"} class="text-gray-500 w-3/4 h-3/4" />
+          <Icon icon={currentAudioOn ? "mdi:volume-high" : "mdi:volume-off"} class="text-gray-500 w-3/4 h-3/4" />
         </button>
       </div>
       <div class="flex-grow"><!--spacer--></div>
