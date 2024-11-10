@@ -1,7 +1,6 @@
 <script lang="ts">
   import { getToastStore, getModalStore } from "@skeletonlabs/skeleton";
   import type { ToastSettings, ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
-  import Icon from "@iconify/svelte";
   import type { TunedModel } from "$lib/types/model";
   import getTunedModels from "$lib/api/genlang/getTunedModels.client";
   import postTunedModelsPermissions from "$lib/api/genlang/postTunedModelsPermissions.client";
@@ -9,6 +8,7 @@
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
   import { downloadFile } from "$lib/utils/download.client";
+  import IconButton from "$lib/components/IconButton.svelte";
   import AuthModal from "$lib/components/modals/AuthModal.svelte";
   import type { PokePrompt } from "$lib/constants/poke";
 
@@ -20,7 +20,7 @@
   function toastSettings(message: string): ToastSettings {
     return {
       message: message,
-      background: "bg-green-100 select-none",
+      background: "bg-surface-900 select-none",
       timeout: 2000,
     };
   }
@@ -110,12 +110,10 @@
 </script>
 
 <div class="cRouteBodyStyle">
-  <!-- タイトル部 -->
   <div class="cTitlePartStyle">
     <h1 class="cTitleStyle">チューニング・サポーター</h1>
   </div>
 
-  <!-- コンテンツ部 -->
   <div class="cContentPartStyle !min-w-[300px] !max-w-[600px]">
     <!-- 各種メニュー -->
     <div class="m-4 space-y-4">
@@ -123,38 +121,16 @@
         <div>
           <div class="cInputFormAndMessagePartStyle">
             <span>アクセストークン取得</span>
-            <form on:submit|preventDefault={showAuthModal}>
-              <button
-                type="submit"
-                disabled={isProcessing}
-                class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
-              >
-                <div class="cIconDivStyle">
-                  <Icon icon="mdi:login" class="cIconStyle" />
-                </div>
-              </button>
-            </form>
+            <IconButton icon="mdi:login" cButton="btn-sm" onClick={showAuthModal} disabled={isProcessing} />
           </div>
           <div class="cInputFormAndMessagePartStyle">
-            <form on:submit|preventDefault={copyToClipboard}>
-              <input type="text" autocomplete="username" id="dummy" class="hidden" aria-hidden="true" />
-              <input
-                type="password"
-                autocomplete="new-password"
-                id="accessToken"
-                bind:value={accessToken}
-                class="border rounded px-4 py-1 h-full"
-              />
-              <button
-                type="submit"
-                disabled={isProcessing}
-                class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
-              >
-                <div class="cIconDivStyle">
-                  <Icon icon="mdi:content-copy" class="cIconStyle" />
-                </div>
-              </button>
-            </form>
+            <input
+              type="password"
+              id="accessToken"
+              bind:value={accessToken}
+              class="h-full text-surface-900 border rounded px-4 py-1"
+            />
+            <IconButton icon="mdi:content-copy" cButton="btn-sm" onClick={copyToClipboard} disabled={isProcessing} />
           </div>
         </div>
       </div>
@@ -163,19 +139,9 @@
         <div>
           <div class="cInputFormAndMessagePartStyle">
             <span>チューニング済みモデル一覧</span>
-            <form on:submit|preventDefault={updateModels}>
-              <button
-                type="submit"
-                disabled={isProcessing}
-                class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
-              >
-                <div class="cIconDivStyle">
-                  <Icon icon="mdi:table-refresh" class="cIconStyle" />
-                </div>
-              </button>
-            </form>
+            <IconButton icon="mdi:table-refresh" cButton="btn-sm" onClick={updateModels} disabled={isProcessing} />
           </div>
-          <div class="table-container">
+          <div class="table-container py-2">
             <!-- Native Table Element -->
             <table class="table table-hover">
               <thead>
@@ -195,19 +161,12 @@
                     <td>{formatDateToJST(model.updateTime)}</td>
                     <td>{model.state}</td>
                     <td>
-                      <button>
-                        <form on:submit|preventDefault={() => updatePermissions(model.name)}>
-                          <button
-                            type="submit"
-                            disabled={isProcessing}
-                            class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
-                          >
-                            <div class="cIconDivStyle">
-                              <Icon icon="mdi:lock-open-plus-outline" class="cIconStyle" />
-                            </div>
-                          </button>
-                        </form>
-                      </button>
+                      <IconButton
+                        icon="mdi:lock-open-plus-outline"
+                        cButton="btn-sm"
+                        onClick={() => updatePermissions(model.name)}
+                        disabled={isProcessing}
+                      />
                     </td>
                   </tr>
                 {/each}
@@ -221,15 +180,14 @@
           type="text"
           id="tunedModelsJsonFileName"
           bind:value={tunedModelsJsonFileName}
-          class="border rounded px-4 py-1 h-full"
+          class="text-surface-900 border rounded px-4 py-1 h-full"
         />
-        <form on:submit|preventDefault={downloadTunedModelsJson}>
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class="cIconDivStyle">
-              <Icon icon="mdi:download-box-outline" class="cIconStyle" />
-            </div>
-          </button>
-        </form>
+        <IconButton
+          icon="mdi:download-box-outline"
+          cButton="btn-sm"
+          onClick={downloadTunedModelsJson}
+          disabled={isProcessing}
+        />
       </div>
 
       <div class="flex flex-col md:flex-row space-x-3">
@@ -242,19 +200,14 @@
               type="text"
               id="exportFileName"
               bind:value={exportFileName}
-              class="border rounded px-4 py-1 h-full"
+              class="text-surface-900 border rounded px-4 py-1 h-full"
             />
-            <form on:submit|preventDefault={explainImages}>
-              <button
-                type="submit"
-                disabled={isProcessing}
-                class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}"
-              >
-                <div class="cIconDivStyle">
-                  <Icon icon="mdi:download-box-outline" class="cIconStyle" />
-                </div>
-              </button>
-            </form>
+            <IconButton
+              icon="mdi:download-box-outline"
+              cButton="btn-sm"
+              onClick={explainImages}
+              disabled={isProcessing}
+            />
           </div>
         </div>
       </div>

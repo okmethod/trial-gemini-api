@@ -9,6 +9,7 @@
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import { pickRandomElementsFromObject } from "$lib/utils/collections";
+  import IconButton from "$lib/components/IconButton.svelte";
   import SelectModelModal from "$lib/components/modals/SelectModelModal.svelte";
   import ChatLogModal from "$lib/components/modals/ChatLogModal.svelte";
   import type { PokePrompt } from "$lib/constants/poke";
@@ -165,28 +166,10 @@
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
     <div class="flex items-center justify-between space-x-2 ml-8 mr-8">
-      <form on:submit|preventDefault={showSelectModelModal}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:brain" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
+      <IconButton icon="mdi:search" cButton="btn-sm" onClick={showSelectModelModal} />
       <div class="flex-grow"><!--spacer--></div>
-      <form on:submit|preventDefault={resetGame}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:restart" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
-      <form on:submit|preventDefault={showChatLogModal}>
-        <button type="submit" class="cIconButtonStyle">
-          <div class="cIconDivStyle">
-            <Icon icon="mdi:forum-outline" class="cIconStyle" />
-          </div>
-        </button>
-      </form>
+      <IconButton icon="mdi:restart" cButton="btn-sm" onClick={resetGame} />
+      <IconButton icon="mdi:forum-outline" cButton="btn-sm" onClick={showChatLogModal} />
     </div>
 
     <!-- Pokenator 表示 -->
@@ -196,7 +179,7 @@
           {#if isOpen}
             <img src={currentPokeData?.imageUrl} alt="Pokenator" class="w-full h-full object-contain" />
           {:else}
-            <Icon icon="mdi:help" class="cIconStyle" />
+            <Icon icon="mdi:help" class="w-full h-full" />
           {/if}
         </div>
         <div class="cSpeechBubbleHeaderStyle" />
@@ -213,43 +196,27 @@
     <!-- 下部ボタン -->
     <div class="flex items-center justify-center space-x-2">
       {#if gameStatus === "init"}
-        <form on:submit|preventDefault={startGame}>
-          <button type="submit" disabled={isProcessing} class="cIconButtonStyle {isProcessing ? '!bg-gray-500' : ''}">
-            <div class="cButtonSpan">
-              <span> はじめる </span>
-            </div>
-          </button>
-        </form>
+        <button type="button" on:click={startGame} class="btn variant-filled"> はじめる </button>
       {:else if gameStatus === "onGame"}
         <div class="flex flex-col space-y-2">
           <div>
-            <input id="message" type="text" class="rounded" bind:value={currentUserInput} placeholder="質問" />
-            <button on:click={sendMessage} class="cIconButtonStyle">
-              <div class="cButtonSpan">
-                <span> たずねる </span>
-              </div>
-            </button>
+            <input
+              id="message"
+              type="text"
+              class="text-surface-900 rounded"
+              bind:value={currentUserInput}
+              placeholder="質問"
+            />
+            <button type="button" on:click={sendMessage} class="btn variant-filled"> たずねる </button>
           </div>
           <div class="flex items-center justify-center">
-            <button on:click={openImage} class="cIconButtonStyle">
-              <div class="cButtonSpan !w-32">
-                <span> こたえをみる </span>
-              </div>
-            </button>
+            <button type="button" on:click={openImage} class="btn variant-filled"> こたえをみる </button>
           </div>
         </div>
       {:else if gameStatus === "gameOver"}
-        <button type="submit" on:click={startGame} class="cIconButtonStyle">
-          <div class="cButtonSpan">
-            <span> もう一度 </span>
-          </div>
-        </button>
+        <button type="button" on:click={startGame} class="btn variant-filled"> もう一度 </button>
       {:else}
-        <button type="submit" on:click={resetGame} class="cIconButtonStyle">
-          <div class="cButtonSpan">
-            <span> リセット </span>
-          </div>
-        </button>
+        <button type="button" on:click={resetGame} class="btn variant-filled"> リセット </button>
       {/if}
     </div>
   </div>
