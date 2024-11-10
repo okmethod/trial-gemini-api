@@ -3,13 +3,13 @@
   import { onMount } from "svelte";
   import { Toast, Modal, initializeStores, storePopup } from "@skeletonlabs/skeleton";
   import { computePosition, autoUpdate, flip, shift, offset, arrow } from "@floating-ui/dom";
-  import Icon from "@iconify/svelte";
   import { setTheme } from "$lib/stores/theme";
   import { getAudioOn, setAudioOn } from "$lib/stores/audio";
   import { generations, getGenerationId, type GenerationId } from "$lib/stores/generation";
   import { pickRandomNumbers } from "$lib/utils/collections";
   import { loadFFmpeg } from "$lib/utils/convertOggToMp3.client";
   import { POKE_API_STADIUM_URL } from "$lib/constants/common";
+  import IconButton from "$lib/components/IconButton.svelte";
 
   export let data: {
     generationSymbolUrlDict: Record<number, string>;
@@ -51,6 +51,8 @@
     currentAudioOn = !currentAudioOn;
     setAudioOn(currentAudioOn);
   }
+
+  const cHeaderButtonStyle = "variant-filled border border-primary-600";
 </script>
 
 <svelte:head>
@@ -61,25 +63,24 @@
 <Toast position="tr" rounded="rounded-lg" />
 
 {#if isLoaded}
-  <div class="flex flex-col h-screen">
-    <div class="relative border-b border-gray-400 bg-gray-100">
-      <div class="flex items-center justify-between h-full">
-        <a
-          href={POKE_API_STADIUM_URL}
-          class="flex flex-row items-center space-x-1 pt-1 pb-1 pl-1 pr-2 m-1 text-sm text-gray-500 bg-white border border-gray-400 rounded-md"
-        >
-          <div class="w-5 h-5">
-            <Icon icon="mdi:home-outline" class="text-gray-500 w-full h-full" />
-          </div>
-          <span class="">HOME</span>
-        </a>
-        <div class="w-8 h-8 bg-white border border-gray-400 rounded-full ml-1">
-          <button on:click={toggleAudioOn} class="w-full h-full flex items-center justify-center">
-            <Icon icon={currentAudioOn ? "mdi:volume-high" : "mdi:volume-off"} class="text-gray-500 w-3/4 h-3/4" />
-          </button>
-        </div>
+  <div class="h-screen flex flex-col">
+    <div class="relative border-b border-gray-400 bg-primary-300 p-1">
+      <div class="h-full flex items-center justify-between space-x-2">
+        <IconButton
+          icon="mdi:home-outline"
+          label="Home"
+          cButton="{cHeaderButtonStyle} !space-x-0 !py-1 !px-2"
+          onClick={() => {
+            window.location.href = POKE_API_STADIUM_URL;
+          }}
+        />
+        <IconButton
+          icon={currentAudioOn ? "mdi:volume-high" : "mdi:volume-off"}
+          cButton="btn-icon btn-icon-sm {cHeaderButtonStyle}"
+          onClick={toggleAudioOn}
+        />
         <div class="flex-grow"><!--spacer--></div>
-        <div class="w-8 h-8 bg-white border border-gray-400 rounded-full">
+        <div class="w-9 h-9 {cHeaderButtonStyle} rounded-full">
           <img
             src={currentGenerationImageUrl}
             alt="generationSymbol"
@@ -89,7 +90,7 @@
         <select
           id="generationId"
           bind:value={currentGenerationId}
-          class="w-24 pt-1 pb-1 pl-2 pr-2 m-1 text-sm text-gray-500 border-gray-400 rounded-md"
+          class="w-24 h-8 {cHeaderButtonStyle} text-sm rounded-sm py-1 px-2 m-1"
         >
           {#each options as option}
             <option value={option.value}>{option.label}</option>
@@ -103,7 +104,7 @@
     </div>
   </div>
 {:else}
-  <div class="flex items-center justify-center h-screen bg-gray-200 space-x-2">
+  <div class="h-screen flex items-center justify-center bg-gray-200 space-x-2">
     <div class="font-mono text-black text-2xl">Now Loading...</div>
     <!-- <img src={data.footerSymbolUrl} alt="footerSymbol" /> -->
   </div>
