@@ -9,7 +9,7 @@
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
   import { downloadFile } from "$lib/utils/download.client";
-  import AuthModal from "$lib/components/AuthModal.svelte";
+  import AuthModal from "$lib/components/modals/AuthModal.svelte";
   import type { PokePrompt } from "$lib/constants/poke";
 
   export let data: {

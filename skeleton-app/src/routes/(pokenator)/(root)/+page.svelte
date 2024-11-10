@@ -6,8 +6,8 @@
   import type { Chat } from "$lib/types/chat";
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
-  import SelectModelModal from "$lib/components/SelectModelModal.svelte";
-  import ChatLogModal from "$lib/components/ChatLogModal.svelte";
+  import SelectModelModal from "$lib/components/modals/SelectModelModal.svelte";
+  import ChatLogModal from "$lib/components/modals/ChatLogModal.svelte";
 
   export let data: {
     hogeTorusImageUrl: string;

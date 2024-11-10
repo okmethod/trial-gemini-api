@@ -9,8 +9,8 @@
   import { fetchChatReply } from "$lib/genlang/generateChatContent";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import { pickRandomElementsFromObject } from "$lib/utils/collections";
-  import SelectModelModal from "$lib/components/SelectModelModal.svelte";
-  import ChatLogModal from "$lib/components/ChatLogModal.svelte";
+  import SelectModelModal from "$lib/components/modals/SelectModelModal.svelte";
+  import ChatLogModal from "$lib/components/modals/ChatLogModal.svelte";
   import type { PokePrompt } from "$lib/constants/poke";
 
   export let data: {
