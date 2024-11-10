@@ -141,12 +141,10 @@
 </script>
 
 <div class="cRouteBodyStyle">
-  <!-- タイトル部 -->
   <div class="cTitlePartStyle md:!mb-4">
     <h1 class="cTitleStyle md:!text-3xl">Pokenator</h1>
   </div>
 
-  <!-- コンテンツ部 -->
   <div class="cContentPartStyle !mt-1 !ml-1 !mr-1">
     <!-- 上部ボタン -->
     <div class="flex items-center justify-between space-x-2 ml-8 mr-8">
@@ -174,15 +172,8 @@
         <div class="w-24 h-24 mb-1">
           <img src={data.hogeTorusImageUrl} alt="Pokenator" class="w-full h-full object-contain" />
         </div>
-        <div
-          class="
-            border-b-8 border-b-gray-100
-            border-t-8 border-t-transparent
-            border-l-8 border-l-transparent
-            border-r-8 border-r-transparent
-          "
-        />
-        <div class="w-72 h-full p-4 bg-gray-100 rounded-xl">
+        <div class="cSpeechBubbleHeaderStyle" />
+        <div class="cSpeechBubbleBodyStyle">
           {#if isProcessing}
             <span>{processingMessage}</span>
           {:else}
