@@ -1,12 +1,11 @@
 <script lang="ts">
   import "../app.postcss";
   import { onMount } from "svelte";
-  import { get } from "svelte/store";
   import { Toast, Modal, initializeStores, storePopup } from "@skeletonlabs/skeleton";
   import { computePosition, autoUpdate, flip, shift, offset, arrow } from "@floating-ui/dom";
   import Icon from "@iconify/svelte";
   import { getAudioOn, setAudioOn } from "$lib/stores/audio";
-  import { generations, generationId, type GenerationId } from "$lib/stores/generation";
+  import { generations, getGenerationId, type GenerationId } from "$lib/stores/generation";
   import { pickRandomNumbers } from "$lib/utils/collections";
   import { loadFFmpeg } from "$lib/utils/convertOggToMp3.client";
   import { POKE_API_STADIUM_URL } from "$lib/constants/common";
@@ -28,7 +27,7 @@
   let currentGenerationImageUrl: string | null = null;
   onMount(async () => {
     currentAudioOn = getAudioOn();
-    currentGenerationId = get(generationId);
+    currentGenerationId = getGenerationId();
     currentGenerationImageUrl = getSymbolImageUrl(currentGenerationId);
     options = options.filter((option) => option.value !== "");
     const audio = document.createElement("audio");

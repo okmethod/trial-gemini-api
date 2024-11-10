@@ -1,10 +1,18 @@
-import { writable } from "svelte/store";
+import { writable, get } from "svelte/store";
 
 export enum GenerationId {
   GenerationI = "generation-i",
 }
 
-export const generationId = writable<GenerationId>(GenerationId.GenerationI);
+const generationIdStore = writable<GenerationId>(GenerationId.GenerationI);
+
+export function getGenerationId(): GenerationId {
+  return get(generationIdStore);
+}
+
+export function setGenerationId(generationId: GenerationId): void {
+  generationIdStore.set(generationId);
+}
 
 export interface GenerationData {
   label: string;
