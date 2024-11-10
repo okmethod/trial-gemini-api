@@ -1,5 +1,4 @@
-import { get } from "svelte/store";
-import { accessToken } from "$lib/stores/auth";
+import { getAccessToken } from "$lib/stores/auth";
 import postGetToken from "$lib/api/functions/postGetToken.client";
 import postTokenEndpoint from "$lib/api/postTokenEndpoint.client";
 import { OAUTH2_CLIENT_ID as clientId, REDIRECT_URI as redirectUri } from "$lib/constants/common";
@@ -7,7 +6,7 @@ import { OAUTH2_CLIENT_ID as clientId, REDIRECT_URI as redirectUri } from "$lib/
 const clientSecret = process.env.OAUTH2_CLIENT_SECRET ? (process.env.OAUTH2_CLIENT_SECRET as string) : null;
 
 export function checkToken(): string | null {
-  const token = get(accessToken);
+  const token = getAccessToken();
   if (!token) return null;
   // if (isTokenExpired(token)) return null; // TODO: 実装したい
   return token;
