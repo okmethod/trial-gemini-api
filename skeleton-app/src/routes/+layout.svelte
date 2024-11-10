@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <div class="container mx-auto overflow-y-auto pb-16">
+    <div class="w-screen mx-auto overflow-y-scroll scrollbar-gutter-stable sm:ml-2 pb-24 sm:pb-10">
       <slot />
     </div>
   </div>
