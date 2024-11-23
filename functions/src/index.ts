@@ -2,7 +2,8 @@
 
 import * as express from "express";
 import * as cors from "cors";
-import * as functions from "firebase-functions";
+import { onRequest } from "firebase-functions/v2/https";
+import { setGlobalOptions } from "firebase-functions/v2";
 import getToken from "./getToken";
 import chatReply from "./chatReply";
 
@@ -28,4 +29,5 @@ app.use(
 app.post("/api/get-token", getToken);
 app.post("/api/chat-reply", chatReply);
 
-exports.api = functions.region("asia-northeast1").https.onRequest(app);
+setGlobalOptions({ region: "asia-northeast1" });
+exports.api = onRequest(app);

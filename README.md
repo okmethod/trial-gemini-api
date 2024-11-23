@@ -5,11 +5,15 @@ APIキーなどのクレデンシャル情報を使う処理は、Firebase Funct
 
 ## ローカルでの起動方法
 
-- 各種クレデンシャル情報の登録
+- 各種クレデンシャル情報の設定
 
   ```sh
-  echo "GEMINI_API_KEY=(Your API Key)" >> .env
-  echo "OAUTH2_CLIENT_SECRET=(Client Secret)" >> .env
+  export GEMINI_API_KEY=(Your API Key)
+  export OAUTH2_CLIENT_ID=(Your Client ID)
+  export OAUTH2_CLIENT_SECRET=(Client Secret)
+  echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
+  echo "OAUTH2_CLIENT_ID=$OAUTH2_CLIENT_ID" >> .env
+  echo "OAUTH2_CLIENT_SECRET=$OAUTH2_CLIENT_SECRET" >> .env
   ```
 
 - コンテナ起動
@@ -27,8 +31,7 @@ APIキーなどのクレデンシャル情報を使う処理は、Firebase Funct
 - Gemini APIキーの登録と Firebase Functions へのデプロイ
 
   ```sh
-  firebase functions:config:set api.geminiapikey="(Your API Key)"
-  firebase functions:config:set api.oauthclientsecret="(Client Secret)"
+  cp .env functions/.env
   firebase deploy --only functions
   ```
 

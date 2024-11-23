@@ -2,16 +2,16 @@
 /* eslint-disable require-jsdoc */
 
 import type { Request, Response } from "express";
-import * as functions from "firebase-functions";
+import { defineString } from "firebase-functions/params";
 
 interface RequestBody {
   authCode: string;
 }
 
+const clientId = defineString("OAUTH2_CLIENT_ID").value();
+const clientSecret = defineString("OAUTH2_CLIENT_SECRET").value();
+
 const getToken = async (req: Request, res: Response) => {
-  // eslint-disable-next-line max-len
-  const clientId = "662755261780-1rlodo5nvjrmajmru33ejjpmtcal7b22.apps.googleusercontent.com";
-  const clientSecret = functions.config().api?.oauthclientsecret;
   if (!clientSecret) {
     res.status(500).json({ error: "OAuth Client Secret not configured" });
     return;

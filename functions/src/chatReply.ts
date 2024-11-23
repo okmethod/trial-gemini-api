@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-spacing */
 
 import type { Request, Response } from "express";
-import * as functions from "firebase-functions";
+import { defineString } from "firebase-functions/params";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type {
   ModelParams,
@@ -18,8 +18,9 @@ interface RequestBody {
   userInput: Array<string | Part>;
 }
 
+const geminiApiKey = defineString("GEMINI_API_KEY").value();
+
 const chatReply = async (req: Request, res: Response) => {
-  const geminiApiKey = functions.config().api?.geminiapikey;
   if (!geminiApiKey) {
     res.status(500).json({ error: "Gemini API Key not configured" });
     return;
