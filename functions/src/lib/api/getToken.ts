@@ -5,8 +5,8 @@ interface RequestBody {
   authCode: string;
 }
 
-const clientId = defineString("OAUTH2_CLIENT_ID").value();
-const clientSecret = defineString("OAUTH2_CLIENT_SECRET").value();
+const clientId = defineString("OAUTH2_CLIENT_ID");
+const clientSecret = defineString("OAUTH2_CLIENT_SECRET");
 
 const getToken = async (req: Request, res: Response) => {
   if (!clientSecret) {
@@ -36,7 +36,7 @@ const getToken = async (req: Request, res: Response) => {
   }
 
   const redirectUri = "urn:ietf:wg:oauth:2.0:oob";
-  const response = await postTokenEndpoint(clientId, clientSecret, redirectUri, authCode);
+  const response = await postTokenEndpoint(clientId.value(), clientSecret.value(), redirectUri, authCode);
 
   res.json(response);
 };

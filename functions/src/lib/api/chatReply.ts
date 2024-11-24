@@ -10,7 +10,7 @@ interface RequestBody {
   userInput: Array<string | Part>;
 }
 
-const geminiApiKey = defineString("GEMINI_API_KEY").value();
+const geminiApiKey = defineString("GEMINI_API_KEY");
 
 const chatReply = async (req: Request, res: Response) => {
   if (!geminiApiKey) {
@@ -46,7 +46,7 @@ const chatReply = async (req: Request, res: Response) => {
 
   let genAI: GoogleGenerativeAI | null = null;
   try {
-    genAI = new GoogleGenerativeAI(geminiApiKey);
+    genAI = new GoogleGenerativeAI(geminiApiKey.value());
   } catch (err) {
     console.error(err);
   }
