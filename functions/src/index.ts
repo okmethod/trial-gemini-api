@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import { onRequest } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
-import getToken from "./getToken.js";
-import chatReply from "./chatReply.js";
+import getToken from "./lib/api/getToken.js";
+import chatReply from "./lib/api/chatReply.js";
 
 const app = express();
 
