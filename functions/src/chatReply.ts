@@ -1,13 +1,7 @@
 import type { Request, Response } from "express";
 import { defineString } from "firebase-functions/params";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import type {
-  ModelParams,
-  RequestOptions,
-  StartChatParams,
-  Part,
-  GenerateContentResult,
-} from "@google/generative-ai";
+import type { ModelParams, RequestOptions, StartChatParams, Part, GenerateContentResult } from "@google/generative-ai";
 
 interface RequestBody {
   modelParams: ModelParams;
@@ -36,12 +30,7 @@ const chatReply = async (req: Request, res: Response) => {
     return;
   }
 
-  const {
-    modelParams,
-    requestOptions,
-    startChatParams,
-    userInput,
-  } = requestBody;
+  const { modelParams, requestOptions, startChatParams, userInput } = requestBody;
   if (
     !modelParams ||
     (requestOptions !== undefined && !("customHeaders" in requestOptions)) ||

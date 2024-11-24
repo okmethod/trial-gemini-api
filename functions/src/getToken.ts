@@ -27,7 +27,7 @@ const getToken = async (req: Request, res: Response) => {
   }
 
   const { authCode } = requestBody;
-  if ( !authCode ) {
+  if (!authCode) {
     res.status(400).json({
       error: "Missing required parameters",
       details: requestBody,
@@ -36,15 +36,13 @@ const getToken = async (req: Request, res: Response) => {
   }
 
   const redirectUri = "urn:ietf:wg:oauth:2.0:oob";
-  const response = await postTokenEndpoint(
-    clientId, clientSecret, redirectUri, authCode
-  );
+  const response = await postTokenEndpoint(clientId, clientSecret, redirectUri, authCode);
 
   res.json(response);
 };
 
 async function postTokenEndpoint(
-  clientId:string,
+  clientId: string,
   clientSecret: string,
   redirectUri: string,
   authCode: string,

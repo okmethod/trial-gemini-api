@@ -7,21 +7,18 @@ import chatReply from "./chatReply";
 
 const app = express();
 
-const allowedOrigins = [
-  "https://okmethod-gemini-trial.web.app",
-  "https://okmethod-gemini-trial.firebaseapp.com",
-];
+const allowedOrigins = ["https://okmethod-gemini-trial.web.app", "https://okmethod-gemini-trial.firebaseapp.com"];
 
 app.use(
   cors({
-    origin: function(origin, callback) {
+    origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-  })
+  }),
 );
 
 app.post("/api/get-token", getToken);
