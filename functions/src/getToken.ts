@@ -1,6 +1,3 @@
-/* eslint-disable object-curly-spacing */
-/* eslint-disable require-jsdoc */
-
 import type { Request, Response } from "express";
 import { defineString } from "firebase-functions/params";
 
@@ -21,6 +18,7 @@ const getToken = async (req: Request, res: Response) => {
   try {
     requestBody = JSON.parse(req.body);
   } catch (error) {
+    console.warn(error);
     res.status(400).json({
       error: "Invalid JSON format",
       details: req.body,

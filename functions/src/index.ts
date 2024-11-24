@@ -1,5 +1,3 @@
-/* eslint-disable object-curly-spacing */
-
 import * as express from "express";
 import * as cors from "cors";
 import { onRequest } from "firebase-functions/v2/https";

@@ -1,5 +1,3 @@
-/* eslint-disable object-curly-spacing */
-
 import type { Request, Response } from "express";
 import { defineString } from "firebase-functions/params";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -30,6 +28,7 @@ const chatReply = async (req: Request, res: Response) => {
   try {
     requestBody = JSON.parse(req.body);
   } catch (error) {
+    console.warn(error);
     res.status(400).json({
       error: "Invalid JSON format",
       details: req.body,
