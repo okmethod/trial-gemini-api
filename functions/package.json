@@ -2,6 +2,7 @@
   "name": "functions",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
