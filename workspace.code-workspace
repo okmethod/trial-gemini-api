@@ -1,15 +1,12 @@
 {
 	"folders": [
 		{
-			"name": "trial-gemini-api",
 			"path": "."
 		},
 		{
-			"name": "skeleton-app",
 			"path": "skeleton-app"
 		},
 		{
-			"name": "functions",
 			"path": "functions"
 		},
 	],
