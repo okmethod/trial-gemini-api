@@ -3,7 +3,7 @@ deploy-app:
 	firebase deploy --only hosting
 
 deploy-functions-api:
-	firebase deploy --only functions
+	firebase deploy --only functions:api
 
 deploy:
 	make deploy-functions-api

@@ -5,8 +5,8 @@ interface RequestBody {
   authCode: string;
 }
 
-const clientId = defineString("OAUTH2_CLIENT_ID");
-const clientSecret = defineString("OAUTH2_CLIENT_SECRET");
+const clientId = defineString("GOOGLE_CLIENT_ID");
+const clientSecret = defineString("GOOGLE_CLIENT_SECRET");
 
 const getToken = async (req: Request, res: Response) => {
   if (!clientSecret) {

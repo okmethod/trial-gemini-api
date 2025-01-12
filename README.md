@@ -9,11 +9,11 @@ APIキーなどのクレデンシャル情報を使う処理は、Firebase Funct
 
   ```sh
   export GEMINI_API_KEY=(Your API Key)
-  export OAUTH2_CLIENT_ID=(Your Client ID)
-  export OAUTH2_CLIENT_SECRET=(Client Secret)
+  export GOOGLE_CLIENT_ID=(Your Client ID)
+  export GOOGLE_CLIENT_SECRET=(Client Secret)
   echo "GEMINI_API_KEY=$GEMINI_API_KEY" >> .env
-  echo "OAUTH2_CLIENT_ID=$OAUTH2_CLIENT_ID" >> .env
-  echo "OAUTH2_CLIENT_SECRET=$OAUTH2_CLIENT_SECRET" >> .env
+  echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+  echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
   ```
 
 - コンテナ起動

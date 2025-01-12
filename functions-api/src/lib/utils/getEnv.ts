@@ -1,13 +1,9 @@
 import { defineString } from "firebase-functions/params";
 
-const getEnvValue = (key: string, fallback: string | undefined) =>
-  process.env.NODE_ENV === "production" ? key : fallback;
-
-export function getEnv(envName: string): string {
-  const envStringParam = defineString(envName);
-  const envValue = getEnvValue(envStringParam.value(), process.env[envName]);
+export function getEnv(envName: string, stringParam: ReturnType<typeof defineString>): string {
+  const envValue = process.env.NODE_ENV === "production" ? stringParam.value() : process.env[envName];
   if (!envValue) {
-    throw new Error("Failed to get frontend URL");
+    throw new Error(`Failed to get env: ${envName}`);
   }
   return envValue;
 }
