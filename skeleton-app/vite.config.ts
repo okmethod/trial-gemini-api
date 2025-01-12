@@ -53,9 +53,12 @@ export default defineConfig({
     exclude: ["@ffmpeg/ffmpeg"],
   },
   server: {
+    fs: {
+      allow: [".."],
+    },
     proxy: {
       "/api": {
-        target: "https://okmethod-gemini-trial.web.app",
+        target: process.env.VITE_API_PROXY_TARGET,
         changeOrigin: true,
       },
     },
