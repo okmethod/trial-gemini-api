@@ -1,6 +1,6 @@
 import { defineString } from "firebase-functions/params";
 
-const envs: string[] = ["GEMINI_API_KEY"] as const;
+const envs: string[] = ["GEMINI_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "BASE_URL"] as const;
 
 const stringParams = envs.reduce(
   (acc, env) => {
