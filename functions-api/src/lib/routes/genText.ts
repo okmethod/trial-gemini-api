@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import type { GenerateContentResult } from "@google/generative-ai";
 import type { RequestGenTextJson, RequestReplyChatJson, ResponseGenTextJson } from "../types/genText";
 import GoogleGenerativeAISingleton from "../services/GoogleGenerativeAISingleton.js";
 
@@ -15,7 +14,7 @@ export const genText = async (req: Request, res: Response) => {
     return;
   }
 
-  let generatedContent: GenerateContentResult;
+  let generatedText: string | null;
   try {
     const genAI = GoogleGenerativeAISingleton.getInstance();
 
@@ -25,7 +24,8 @@ export const genText = async (req: Request, res: Response) => {
       customHeaders: headers,
     });
 
-    generatedContent = await model.generateContent(promptText);
+    const generatedContentResult = await model.generateContent(promptText);
+    generatedText = generatedContentResult.response.text();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No response from GoogleGenerativeAI" });
@@ -33,9 +33,7 @@ export const genText = async (req: Request, res: Response) => {
   }
 
   const response: ResponseGenTextJson = {
-    content: generatedContent.response.candidates
-      ? (generatedContent.response.candidates[0].content.parts[0].text ?? null)
-      : null,
+    content: generatedText,
   };
   res.json(response);
 };
@@ -56,7 +54,7 @@ export const replyChat = async (req: Request, res: Response) => {
     return;
   }
 
-  let generatedContent: GenerateContentResult;
+  let generatedText: string | null;
   try {
     const genAI = GoogleGenerativeAISingleton.getInstance();
 
@@ -67,7 +65,8 @@ export const replyChat = async (req: Request, res: Response) => {
     });
 
     const chat = model.startChat(startChatParams);
-    generatedContent = await chat.sendMessage(userInput);
+    const generatedContentResult = await chat.sendMessage(userInput);
+    generatedText = generatedContentResult.response.text();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No response from GoogleGenerativeAI" });
@@ -75,7 +74,7 @@ export const replyChat = async (req: Request, res: Response) => {
   }
 
   const response: ResponseGenTextJson = {
-    content: generatedContent.response.text(),
+    content: generatedText,
   };
   res.json(response);
 };
