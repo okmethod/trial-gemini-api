@@ -46,9 +46,9 @@ setGlobalOptions({ region: "asia-northeast1" });
 export const api = onRequest(app);
 
 // for local only
-if (process.env.NODE_ENV !== "production") {
-  const host = process.env.LOCAL_HOST || "0.0.0.0";
-  const port = process.env.LOCAL_PORT || 3000;
+if (process.env.RUN_DEV === "true") {
+  const host = process.env.HOST || "0.0.0.0";
+  const port = process.env.PORT || 3000;
   app.listen(port as number, host as string, () => {
     console.log(`Server is running on ${host}:${port}`);
   });
