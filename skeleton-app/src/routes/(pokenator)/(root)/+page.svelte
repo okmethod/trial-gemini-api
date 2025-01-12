@@ -3,7 +3,7 @@
   import { getModalStore } from "@skeletonlabs/skeleton";
   import type { ModalSettings, ModalComponent } from "@skeletonlabs/skeleton";
   import type { Chat } from "$lib/types/chat";
-  import { fetchChatReply } from "$lib/genlang/generateChatContent";
+  import postReplyChat from "$lib/api/postReplyChat";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import IconButton from "$lib/components/IconButton.svelte";
   import SelectModelModal from "$lib/components/modals/SelectModelModal.svelte";
@@ -34,7 +34,7 @@
     gameStatus = decideGameStatus(turnCounter);
 
     let aiOutput: string | null;
-    aiOutput = await fetchChatReply(window.fetch, currentModelName, chatHistory, [userInput]);
+    aiOutput = (await postReplyChat(window.fetch, userInput, chatHistory, currentModelName)).content;
     if (!aiOutput) {
       aiOutput = FailedAiOutput;
       turnCounter += 99;

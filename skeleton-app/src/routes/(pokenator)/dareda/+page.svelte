@@ -6,7 +6,7 @@
   import type { Part } from "@google/generative-ai";
   import { initAudio } from "$lib/stores/audio";
   import type { Chat } from "$lib/types/chat";
-  import { fetchChatReply } from "$lib/genlang/generateChatContent";
+  import postReplyChat from "$lib/api/postReplyChat";
   import transMarkdownToSanitizedHtml from "$lib/utils/transHtml";
   import { pickRandomElementsFromObject } from "$lib/utils/collections";
   import IconButton from "$lib/components/IconButton.svelte";
@@ -44,7 +44,7 @@
     gameStatus = decideGameStatus(turnCounter);
 
     let aiOutput: string | null;
-    aiOutput = await fetchChatReply(window.fetch, currentModelName, chatHistory, userInput);
+    aiOutput = (await postReplyChat(window.fetch, userInput, chatHistory, currentModelName)).content;
     if (!aiOutput) {
       aiOutput = FailedAiOutput;
       turnCounter += 99;
