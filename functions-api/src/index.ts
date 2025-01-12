@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import { onRequest } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
-import { pathGetToken, pathChatReply } from "./lib/consts/paths.js";
+import { pathHeartbeat, pathGetToken, pathChatReply } from "./lib/consts/paths.js";
+import heartbeat from "./lib/routes/heartbeat.js";
 import getToken from "./lib/routes/getToken.js";
 import chatReply from "./lib/routes/chatReply.js";
 
@@ -28,6 +29,7 @@ app.use(
 
 app.use(express.json());
 
+app.get(pathHeartbeat, heartbeat);
 app.post(pathGetToken, getToken);
 app.post(pathChatReply, chatReply);
 

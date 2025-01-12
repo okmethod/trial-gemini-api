@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
+    "target": "esnext",
     "moduleResolution": "node",
     "module": "esnext",
     "noImplicitReturns": true,
@@ -15,5 +16,6 @@
     "outDir": "dist"
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
