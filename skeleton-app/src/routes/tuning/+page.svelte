@@ -4,7 +4,7 @@
   import type { TunedModel } from "$lib/types/model";
   import getTunedModels from "$lib/api/genlang/getTunedModels.client";
   import postTunedModelsPermissions from "$lib/api/genlang/postTunedModelsPermissions.client";
-  import { fetchText } from "$lib/genlang/generateContent";
+  import postGenText from "$lib/api/postGenText";
   import { checkToken } from "$lib/utils/auth";
   import { formatDateToJST } from "$lib/utils/format";
   import { downloadFile } from "$lib/utils/download.client";
@@ -100,7 +100,7 @@
 
     for (const key in data.trainingPokePrompts) {
       const pokeData = data.trainingPokePrompts[key];
-      const generatedtext = await fetchText(null, [pokeData.prompt, pokeData.imagePart]);
+      const generatedtext = (await postGenText(window.fetch, [pokeData.prompt, pokeData.imagePart])).content;
       console.log(`Generated content for ${pokeData.name}:`, generatedtext);
     }
   }
