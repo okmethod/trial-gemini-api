@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { onRequest } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
+import { pathGetToken, pathChatReply } from "./lib/consts/paths.js";
 import getToken from "./lib/routes/getToken.js";
 import chatReply from "./lib/routes/chatReply.js";
 
@@ -27,8 +28,8 @@ app.use(
 
 app.use(express.json());
 
-app.post("/api/get-token", getToken);
-app.post("/api/chat-reply", chatReply);
+app.post(pathGetToken, getToken);
+app.post(pathChatReply, chatReply);
 
 setGlobalOptions({ region: "asia-northeast1" });
 
