@@ -18,7 +18,13 @@ const genText = async (req: Request, res: Response) => {
   let generatedContent: GenerateContentResult;
   try {
     const genAI = GoogleGenerativeAISingleton.getInstance();
-    const model = genAI.getGenerativeModel(modelParams);
+
+    const headers: Headers = new Headers();
+    if (req.headers.referer) headers.append("Referer", req.headers.referer);
+    const model = genAI.getGenerativeModel(modelParams, {
+      customHeaders: headers,
+    });
+
     generatedContent = await model.generateContent(promptText);
   } catch (err) {
     console.error(err);
@@ -27,7 +33,9 @@ const genText = async (req: Request, res: Response) => {
   }
 
   const response: ResponseGenTextJson = {
-    content: generatedContent.response.text(),
+    content: generatedContent.response.candidates
+      ? (generatedContent.response.candidates[0].content.parts[0].text ?? null)
+      : null,
   };
   res.json(response);
 };

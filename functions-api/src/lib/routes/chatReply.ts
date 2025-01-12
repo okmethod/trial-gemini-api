@@ -1,35 +1,10 @@
 import type { Request, Response } from "express";
-import { defineString } from "firebase-functions/params";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { ModelParams, RequestOptions, StartChatParams, Part, GenerateContentResult } from "@google/generative-ai";
-
-interface RequestBody {
-  modelParams: ModelParams;
-  requestOptions: RequestOptions | undefined;
-  startChatParams: StartChatParams;
-  userInput: Array<string | Part>;
-}
-
-const geminiApiKey = defineString("GEMINI_API_KEY");
+import type { GenerateContentResult } from "@google/generative-ai";
+import type { RequestReplyChatJson, ResponseGenTextJson } from "../types/genText";
+import GoogleGenerativeAISingleton from "../services/GoogleGenerativeAISingleton.js";
 
 const chatReply = async (req: Request, res: Response) => {
-  if (!geminiApiKey) {
-    res.status(500).json({ error: "Gemini API Key not configured" });
-    return;
-  }
-
-  let requestBody: RequestBody;
-  try {
-    requestBody = JSON.parse(req.body);
-  } catch (error) {
-    console.warn(error);
-    res.status(400).json({
-      error: "Invalid JSON format",
-      details: req.body,
-    });
-    return;
-  }
-
+  const requestBody: RequestReplyChatJson = req.body;
   const { modelParams, requestOptions, startChatParams, userInput } = requestBody;
   if (
     !modelParams ||
@@ -44,28 +19,27 @@ const chatReply = async (req: Request, res: Response) => {
     return;
   }
 
-  let genAI: GoogleGenerativeAI | null = null;
+  let generatedContent: GenerateContentResult;
   try {
-    genAI = new GoogleGenerativeAI(geminiApiKey.value());
-  } catch (err) {
-    console.error(err);
-  }
-  if (!genAI) {
-    res.status(500).json({ error: "Failed to initialize GoogleGenerativeAI" });
-    return;
-  }
+    const genAI = GoogleGenerativeAISingleton.getInstance();
 
-  let response: GenerateContentResult;
-  try {
-    const model = genAI.getGenerativeModel(modelParams, requestOptions);
+    const headers: Headers = new Headers();
+    if (req.headers.referer) headers.append("Referer", req.headers.referer);
+    const model = genAI.getGenerativeModel(modelParams, {
+      customHeaders: headers,
+    });
+
     const chat = model.startChat(startChatParams);
-    response = await chat.sendMessage(userInput);
+    generatedContent = await chat.sendMessage(userInput);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "No response from GoogleGenerativeAI" });
     return;
   }
 
+  const response: ResponseGenTextJson = {
+    content: generatedContent.response.text(),
+  };
   res.json(response);
 };
 

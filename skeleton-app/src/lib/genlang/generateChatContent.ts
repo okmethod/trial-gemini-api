@@ -53,7 +53,7 @@ export async function fetchChatReply(
         chatParam,
         userInput,
       );
-      reply = response.response.candidates ? (response.response.candidates[0].content.parts[0].text ?? null) : null;
+      reply = response.content;
     } catch (error) {
       console.error("Failed to receive chat reply in production:", error);
       return null;

@@ -18,6 +18,7 @@ async function postChatReply(
   const requestBody: RequestBody = { modelParams, requestOptions, startChatParams, userInput };
   const requestInit: RequestInit = {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(requestBody),
   };
   try {
