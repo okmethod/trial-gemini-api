@@ -13,7 +13,7 @@ services:
     command: /bin/sh -c "npm install && npm run dev"
 
   functions-api:
-    image: node:18-slim
+    image: node:20-slim
     ports:
       - 3000:3000
     working_dir: /app
