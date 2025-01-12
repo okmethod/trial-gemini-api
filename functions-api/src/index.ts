@@ -4,9 +4,8 @@ import { onRequest } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
 import { pathHeartbeat, pathGenText, pathGetToken, pathReplyChat } from "./lib/consts/paths.js";
 import heartbeat from "./lib/routes/heartbeat.js";
-import genText from "./lib/routes/genText.js";
+import { genText, replyChat } from "./lib/routes/genText.js";
 import getToken from "./lib/routes/getToken.js";
-import replyChat from "./lib/routes/replyChat.js";
 
 const app = express();
 
