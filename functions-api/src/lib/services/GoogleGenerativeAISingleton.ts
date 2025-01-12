@@ -1,8 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { defineString } from "firebase-functions/params";
 import { getEnv } from "../utils/getEnv.js";
-
-const apiKey = defineString("GEMINI_API_KEY");
 
 class GoogleGenerativeAISingleton {
   private static instance: GoogleGenerativeAI | null = null;
@@ -12,9 +9,7 @@ class GoogleGenerativeAISingleton {
 
   public static getInstance(): GoogleGenerativeAI {
     if (!GoogleGenerativeAISingleton.instance) {
-      GoogleGenerativeAISingleton.instance = GoogleGenerativeAISingleton.initializeInstance(
-        getEnv("GEMINI_API_KEY", apiKey),
-      );
+      GoogleGenerativeAISingleton.instance = GoogleGenerativeAISingleton.initializeInstance(getEnv("GEMINI_API_KEY"));
     }
     return GoogleGenerativeAISingleton.instance;
   }
