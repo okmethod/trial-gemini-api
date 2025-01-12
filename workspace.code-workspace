@@ -7,10 +7,8 @@
 			"path": "skeleton-app"
 		},
 		{
-			"path": "functions"
+			"path": "functions-api"
 		},
 	],
-	"settings": {
-		"makefile.configureOnOpen": false
-	}
+	"settings": {}
 }
