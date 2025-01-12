@@ -1,11 +1,16 @@
 import type { Request, Response } from "express";
+import type { GenerativeModel, GenerateContentResult } from "@google/generative-ai";
 import type { RequestGenTextJson, RequestReplyChatJson, ResponseGenTextJson } from "../types/genText";
 import GoogleGenerativeAISingleton from "../services/GoogleGenerativeAISingleton.js";
 
-export const genText = async (req: Request, res: Response) => {
-  const requestBody: RequestGenTextJson = req.body;
-  const { modelParams, promptText } = requestBody;
-  if (!modelParams || !promptText) {
+const generateContent = async (
+  req: Request,
+  res: Response,
+  generateFn: (model: GenerativeModel) => Promise<GenerateContentResult>,
+): Promise<void> => {
+  const requestBody: RequestGenTextJson | RequestReplyChatJson = req.body;
+  const { modelParams, userInput, requestOptions } = requestBody;
+  if (!modelParams || !userInput || (requestOptions !== undefined && !("customHeaders" in requestOptions))) {
     console.warn("Missing required parameters:", requestBody);
     res.status(400).json({
       error: "Missing required parameters",
@@ -14,39 +19,44 @@ export const genText = async (req: Request, res: Response) => {
     return;
   }
 
-  let generatedText: string | null;
   try {
     const genAI = GoogleGenerativeAISingleton.getInstance();
-
-    const headers: Headers = new Headers();
-    if (req.headers.referer) headers.append("Referer", req.headers.referer);
+    const additionalHeaders = req.headers.referer ? { Referer: req.headers.referer } : undefined;
     const model = genAI.getGenerativeModel(modelParams, {
-      customHeaders: headers,
+      ...requestOptions,
+      customHeaders: {
+        ...requestOptions?.customHeaders,
+        ...additionalHeaders,
+      },
     });
 
-    const generatedContentResult = await model.generateContent(promptText);
-    generatedText = generatedContentResult.response.text();
+    const generatedContentResult = await generateFn(model);
+    const response: ResponseGenTextJson = {
+      content: generatedContentResult.response.text(),
+    };
+    res.json(response);
+    return;
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "No response from GoogleGenerativeAI" });
+    res.status(500).json({ error: "Failed to generate content" });
     return;
   }
+};
 
-  const response: ResponseGenTextJson = {
-    content: generatedText,
-  };
-  res.json(response);
+export const genText = async (req: Request, res: Response) => {
+  const requestBody: RequestGenTextJson = req.body;
+  const { userInput } = requestBody;
+
+  await generateContent(req, res, async (model) => {
+    return await model.generateContent(userInput);
+  });
 };
 
 export const replyChat = async (req: Request, res: Response) => {
   const requestBody: RequestReplyChatJson = req.body;
-  const { modelParams, requestOptions, startChatParams, userInput } = requestBody;
-  if (
-    !modelParams ||
-    (requestOptions !== undefined && !("customHeaders" in requestOptions)) ||
-    !startChatParams ||
-    !userInput
-  ) {
+  const { userInput, startChatParams } = requestBody;
+  if (!startChatParams) {
+    console.warn("Missing required parameters:", requestBody);
     res.status(400).json({
       error: "Missing required parameters",
       details: requestBody,
@@ -54,27 +64,8 @@ export const replyChat = async (req: Request, res: Response) => {
     return;
   }
 
-  let generatedText: string | null;
-  try {
-    const genAI = GoogleGenerativeAISingleton.getInstance();
-
-    const headers: Headers = new Headers();
-    if (req.headers.referer) headers.append("Referer", req.headers.referer);
-    const model = genAI.getGenerativeModel(modelParams, {
-      customHeaders: headers,
-    });
-
+  await generateContent(req, res, async (model) => {
     const chat = model.startChat(startChatParams);
-    const generatedContentResult = await chat.sendMessage(userInput);
-    generatedText = generatedContentResult.response.text();
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "No response from GoogleGenerativeAI" });
-    return;
-  }
-
-  const response: ResponseGenTextJson = {
-    content: generatedText,
-  };
-  res.json(response);
+    return await chat.sendMessage(userInput);
+  });
 };

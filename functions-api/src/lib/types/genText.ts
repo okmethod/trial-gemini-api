@@ -2,14 +2,12 @@ import type { ModelParams, RequestOptions, StartChatParams, Part } from "@google
 
 export interface RequestGenTextJson {
   modelParams: ModelParams;
-  promptText: string;
+  userInput: string | Array<string | Part>;
+  requestOptions?: RequestOptions | undefined;
 }
 
-export interface RequestReplyChatJson {
-  modelParams: ModelParams;
-  requestOptions: RequestOptions | undefined;
+export interface RequestReplyChatJson extends RequestGenTextJson {
   startChatParams: StartChatParams;
-  userInput: Array<string | Part>;
 }
 
 export interface ResponseGenTextJson {
