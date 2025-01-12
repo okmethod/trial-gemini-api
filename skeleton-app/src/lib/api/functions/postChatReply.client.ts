@@ -14,7 +14,7 @@ async function postChatReply(
   startChatParams: StartChatParams,
   userInput: Array<string | Part>,
 ): Promise<GenerateContentResult> {
-  const apiUrl = "/api/chat-reply";
+  const apiUrl = "/api/reply-chat";
   const requestBody: RequestBody = { modelParams, requestOptions, startChatParams, userInput };
   const requestInit: RequestInit = {
     method: "POST",

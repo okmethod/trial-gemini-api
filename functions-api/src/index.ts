@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 import { onRequest } from "firebase-functions/v2/https";
 import { setGlobalOptions } from "firebase-functions/v2";
-import { pathHeartbeat, pathGenText, pathGetToken, pathChatReply } from "./lib/consts/paths.js";
+import { pathHeartbeat, pathGenText, pathGetToken, pathReplyChat } from "./lib/consts/paths.js";
 import heartbeat from "./lib/routes/heartbeat.js";
 import genText from "./lib/routes/genText.js";
 import getToken from "./lib/routes/getToken.js";
-import chatReply from "./lib/routes/chatReply.js";
+import replyChat from "./lib/routes/replyChat.js";
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.use(express.json());
 app.get(pathHeartbeat, heartbeat);
 app.post(pathGenText, genText);
 app.post(pathGetToken, getToken);
-app.post(pathChatReply, chatReply);
+app.post(pathReplyChat, replyChat);
 
 setGlobalOptions({ region: "asia-northeast1" });
 

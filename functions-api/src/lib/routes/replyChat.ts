@@ -3,7 +3,7 @@ import type { GenerateContentResult } from "@google/generative-ai";
 import type { RequestReplyChatJson, ResponseGenTextJson } from "../types/genText";
 import GoogleGenerativeAISingleton from "../services/GoogleGenerativeAISingleton.js";
 
-const chatReply = async (req: Request, res: Response) => {
+const replyChat = async (req: Request, res: Response) => {
   const requestBody: RequestReplyChatJson = req.body;
   const { modelParams, requestOptions, startChatParams, userInput } = requestBody;
   if (
@@ -43,4 +43,4 @@ const chatReply = async (req: Request, res: Response) => {
   res.json(response);
 };
 
-export default chatReply;
+export default replyChat;
