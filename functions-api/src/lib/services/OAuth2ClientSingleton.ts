@@ -19,7 +19,7 @@ class OAuth2ClientSingleton {
       OAuth2ClientSingleton.instance = OAuth2ClientSingleton.initializeInstance({
         clientId: getEnv("GOOGLE_CLIENT_ID"),
         clientSecret: getEnv("GOOGLE_CLIENT_SECRET"),
-        redirectUri: `${getEnv("BASE_URL")}${pathRedirectAuthCallback}`,
+        redirectUri: `${process.env.NODE_ENV === "production" ? getEnv("BASE_URL") : process.env.LOCAL_BASE_URL}${pathRedirectAuthCallback}`,
       });
     }
     return OAuth2ClientSingleton.instance;
